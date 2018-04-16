@@ -1,0 +1,14 @@
+{
+    "name": "pxgamer/trakt-to-yts",
+    "type": "library",
+    "description": "A CLI for downloading Trakt lists from YTS.",
+    "license": "MIT",
+    "require": {
+        "php": "^7.1",
+        "guzzlehttp/guzzle": "^6.3",
+        "symfony/console": "^3.0 || ^4.0"
+    },
+    "bin": [
+        "bin/trakt-to-yts"
+    ]
+}
