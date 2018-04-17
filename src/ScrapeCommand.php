@@ -38,6 +38,12 @@ class ScrapeCommand extends Command
      */
     private $list;
     /**
+     * The list data from Trakt
+     *
+     * @var array
+     */
+    private $listData;
+    /**
      * The Output interface
      *
      * @var OutputInterface
@@ -118,24 +124,14 @@ class ScrapeCommand extends Command
 
         $this->parseInput($input);
 
-        $listData = $this->getJson(
-            self::TRAKT_API_URI.'/users/'.$this->traktUser.'/watchlist/movies',
-            [
-                'headers' => [
-                    'trakt-api-version' => 2,
-                    'trakt-api-key'     => $this->apiKey,
-                ],
-            ]
-        );
-
-        if (empty($listData)) {
-            $this->output->writeln('<info>No movies were found in this list.</info>');
-        }
+        $this->getListData();
 
         $this->output->writeln([
-            'List data from '.self::TRAKT_MAIN_URI.'/users/'.$this->traktUser.'/watchlist',
+            'List data from '.($this->list ?
+                self::TRAKT_MAIN_URI.'/users/'.$this->traktUser.'/lists/'.$this->list :
+                self::TRAKT_MAIN_URI.'/users/'.$this->traktUser.'/watchlist'),
             '',
-            'Movies: '.count($listData),
+            'Movies: '.count($this->listData),
         ]);
 
         $downloadQuestion = new ConfirmationQuestion('Download torrent files for this list? (y/N) ', false);
@@ -145,7 +141,7 @@ class ScrapeCommand extends Command
                 mkdir($this->outputDirectory);
             }
 
-            foreach ($listData as $datum) {
+            foreach ($this->listData as $datum) {
                 if (!$datum->movie->ids->imdb) {
                     continue;
                 }
@@ -211,5 +207,29 @@ class ScrapeCommand extends Command
         $this->traktUser = $input->getArgument('trakt-user');
         $this->quality = $input->getArgument('quality');
         $this->list = $input->getOption('list');
+    }
+
+    /**
+     * @throws \ErrorException
+     */
+    private function getListData()
+    {
+        $listUrl = $this->list ?
+            self::TRAKT_API_URI.'/users/'.$this->traktUser.'/lists/'.$this->list.'/items/movies' :
+            self::TRAKT_API_URI.'/users/'.$this->traktUser.'/watchlist/movies';
+
+        $this->listData = $this->getJson(
+            $listUrl,
+            [
+                'headers' => [
+                    'trakt-api-version' => 2,
+                    'trakt-api-key'     => $this->apiKey,
+                ],
+            ]
+        );
+
+        if (empty($this->listData)) {
+            throw new \ErrorException('No movies were found in this list.');
+        }
     }
 }
