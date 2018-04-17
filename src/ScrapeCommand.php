@@ -98,7 +98,7 @@ class ScrapeCommand extends Command
             )
             ->addArgument(
                 'quality',
-                InputOption::VALUE_REQUIRED,
+                InputArgument::OPTIONAL,
                 'The quality to download (720p, 1080p or 3D).',
                 '1080p'
             );
@@ -124,7 +124,7 @@ class ScrapeCommand extends Command
         $this->outputDirectory = $input->getOption('output');
         $this->traktUser = $input->getArgument('trakt-user');
         $this->quality = $input->getArgument('quality');
-        $this->list = $input->getArgument('list');
+        $this->list = $input->getOption('list');
 
         $listData = $this->getJson(
             self::TRAKT_API_URI.'/users/'.$this->traktUser.'/watchlist/movies',
