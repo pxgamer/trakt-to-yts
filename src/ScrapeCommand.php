@@ -137,44 +137,7 @@ class ScrapeCommand extends Command
         $downloadQuestion = new ConfirmationQuestion('Download torrent files for this list? (y/N) ', false);
 
         if ($this->getHelper('question')->ask($input, $output, $downloadQuestion)) {
-            if (!is_dir($this->outputDirectory)) {
-                mkdir($this->outputDirectory);
-            }
-
-            foreach ($this->listData as $datum) {
-                if (!$datum->movie->ids->imdb) {
-                    continue;
-                }
-
-                $ytsData = $this->getJson(
-                    self::YTS_API_URI.'/list_movies.json?query_term='.
-                    $datum->movie->ids->imdb.(isset($this->quality) ? '&quality='.$this->quality : '')
-                );
-
-                if (isset($ytsData->data->movies[0])) {
-                    $current = $ytsData->data->movies[0];
-
-                    foreach ($current->torrents as $torrent) {
-                        if ($torrent->quality === $this->quality) {
-                            $this->output->writeln('Downloading: '.$current->title_long.
-                                                   ' ['.$current->imdb_code.'] in '.$torrent->quality);
-
-                            $outputFile = $this->outputDirectory.DIRECTORY_SEPARATOR.$torrent->title_long.'.torrent';
-
-                            file_put_contents(
-                                $outputFile,
-                                file_get_contents($torrent->url)
-                            );
-
-                            if (!file_exists($outputFile) || filesize($outputFile) < 1) {
-                                $this->output->writeln('<error>Failed to download '.$current->title_long.'</error>');
-                            }
-
-                            break;
-                        }
-                    }
-                }
-            }
+            $this->downloadTorrents();
         }
     }
 
@@ -230,6 +193,53 @@ class ScrapeCommand extends Command
 
         if (empty($this->listData)) {
             throw new \ErrorException('No movies were found in this list.');
+        }
+    }
+
+    private function downloadTorrents()
+    {
+        if (!is_dir($this->outputDirectory)) {
+            mkdir($this->outputDirectory);
+        }
+
+        foreach ($this->listData as $datum) {
+            if (!$datum->movie->ids->imdb) {
+                continue;
+            }
+
+            $ytsData = $this->getJson(
+                self::YTS_API_URI.'/list_movies.json?query_term='.
+                $datum->movie->ids->imdb.(isset($this->quality) ? '&quality='.$this->quality : '')
+            );
+
+            if (isset($ytsData->data->movies[0])) {
+                $current = $ytsData->data->movies[0];
+
+                foreach ($current->torrents as $torrent) {
+                    if ($torrent->quality === $this->quality) {
+                        $this->output->writeln(
+                            'Downloading: '.$current->title_long.
+                            ' ['.$current->imdb_code.']'.
+                            ' in '.$torrent->quality
+                        );
+
+                        $outputFile = $this->outputDirectory.DIRECTORY_SEPARATOR.$torrent->title_long.'.torrent';
+
+                        file_put_contents(
+                            $outputFile,
+                            file_get_contents($torrent->url)
+                        );
+
+                        if (!file_exists($outputFile) || filesize($outputFile) < 1) {
+                            $this->output->writeln(
+                                '<error>Failed to download '.$current->title_long.'</error>'
+                            );
+                        }
+
+                        break;
+                    }
+                }
+            }
         }
     }
 }
