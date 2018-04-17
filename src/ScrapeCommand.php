@@ -147,43 +147,6 @@ class ScrapeCommand extends Command
     }
 
     /**
-     * @param string     $url
-     * @param array|null $options
-     * @return array
-     */
-    private function getJson(string $url, array $options = null): array
-    {
-        if (!isset($this->guzzle)) {
-            $this->guzzle = new Client();
-        }
-
-        return \GuzzleHttp\json_decode(
-            $this->guzzle->get($url, $options)
-                ->getBody()
-                ->getContents(),
-            true
-        );
-    }
-
-    /**
-     * @param string $url
-     * @param string $downloadPath
-     * @return bool
-     */
-    private function getTorrentFile(string $url, string $downloadPath): bool
-    {
-        if (!isset($this->guzzle)) {
-            $this->guzzle = new Client();
-        }
-
-        return $this->guzzle
-                ->get($url, [
-                    'sink' => $downloadPath,
-                ])
-                ->getStatusCode() === 200;
-    }
-
-    /**
      * @param InputInterface $input
      * @throws \ErrorException
      */
@@ -223,6 +186,41 @@ class ScrapeCommand extends Command
         if (empty($this->listData)) {
             throw new \ErrorException('No movies were found in this list.');
         }
+    }
+
+    /**
+     * @param string     $url
+     * @param array|null $options
+     * @return array
+     */
+    private function getJson(string $url, array $options = null): array
+    {
+        if (!isset($this->guzzle)) {
+            $this->guzzle = new Client();
+        }
+
+        return \GuzzleHttp\json_decode(
+            $this->guzzle->get($url, $options)
+                ->getBody()
+                ->getContents(),
+            true
+        );
+    }
+
+    /**
+     * @param string $question
+     * @return bool
+     */
+    private function askConfirmation(string $question): bool
+    {
+        $question = new ConfirmationQuestion(
+            $question,
+            false
+        );
+
+        return $this
+            ->getHelper('question')
+            ->ask($this->input, $this->output, $question);
     }
 
     /**
@@ -271,18 +269,20 @@ class ScrapeCommand extends Command
     }
 
     /**
-     * @param string $question
+     * @param string $url
+     * @param string $downloadPath
      * @return bool
      */
-    private function askConfirmation(string $question): bool
+    private function getTorrentFile(string $url, string $downloadPath): bool
     {
-        $question = new ConfirmationQuestion(
-            $question,
-            false
-        );
+        if (!isset($this->guzzle)) {
+            $this->guzzle = new Client();
+        }
 
-        return $this
-            ->getHelper('question')
-            ->ask($this->input, $this->output, $question);
+        return $this->guzzle
+                ->get($url, [
+                    'sink' => $downloadPath,
+                ])
+                ->getStatusCode() === 200;
     }
 }
