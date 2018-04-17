@@ -238,12 +238,12 @@ class ScrapeCommand extends Command
 
                         $outputFile = $this->outputDirectory.DIRECTORY_SEPARATOR.$torrent->title_long.'.torrent';
 
-                        file_put_contents(
+                        $creationStatus = file_put_contents(
                             $outputFile,
                             file_get_contents($torrent->url)
                         );
 
-                        if (!file_exists($outputFile) || filesize($outputFile) < 1) {
+                        if (!$creationStatus) {
                             $this->output->writeln(
                                 '<error>Failed to download '.$current->title_long.'</error>'
                             );
