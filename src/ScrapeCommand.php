@@ -108,9 +108,10 @@ class ScrapeCommand extends Command
                 'The directory to output data to (defaults to `torrents`).',
                 'torrents'
             )
-            ->addArgument(
+            ->addOption(
                 'quality',
-                InputArgument::OPTIONAL,
+                null,
+                InputOption::VALUE_REQUIRED,
                 'The quality to download (720p, 1080p or 3D).',
                 '1080p'
             );
@@ -158,9 +159,9 @@ class ScrapeCommand extends Command
             throw new \ErrorException('Unspecified API key.');
         }
 
-        $this->outputDirectory = $input->getOption('output');
         $this->traktUser = $input->getArgument('trakt-user');
-        $this->quality = $input->getArgument('quality');
+        $this->outputDirectory = $input->getOption('output');
+        $this->quality = $input->getOption('quality');
         $this->list = $input->getOption('list');
     }
 
