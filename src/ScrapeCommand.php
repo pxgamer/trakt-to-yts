@@ -18,6 +18,11 @@ class ScrapeCommand extends Command
     const TRAKT_API_URI = 'https://api.trakt.tv';
     const TRAKT_MAIN_URI = 'https://trakt.tv';
     const YTS_API_URI = 'https://yts.am/api/v2';
+    const ALLOWED_QUALITIES = [
+        Quality::Q_1080P,
+        Quality::Q_720P,
+        Quality::Q_3D,
+    ];
 
     /**
      * A Trakt API key
@@ -66,7 +71,7 @@ class ScrapeCommand extends Command
      *
      * @var string|null
      */
-    private $quality = '1080p';
+    private $quality;
     /**
      * A Trakt username
      *
@@ -108,9 +113,10 @@ class ScrapeCommand extends Command
                 'The directory to output data to (defaults to `torrents`).',
                 'torrents'
             )
-            ->addArgument(
+            ->addOption(
                 'quality',
-                InputArgument::OPTIONAL,
+                null,
+                InputOption::VALUE_REQUIRED,
                 'The quality to download (720p, 1080p or 3D).',
                 '1080p'
             );
@@ -147,25 +153,6 @@ class ScrapeCommand extends Command
     }
 
     /**
-     * @param string     $url
-     * @param array|null $options
-     * @return array
-     */
-    private function getJson(string $url, array $options = null): array
-    {
-        if (!isset($this->guzzle)) {
-            $this->guzzle = new Client();
-        }
-
-        return \GuzzleHttp\json_decode(
-            $this->guzzle->get($url, $options)
-                         ->getBody()
-                         ->getContents(),
-            true
-        );
-    }
-
-    /**
      * @param InputInterface $input
      * @throws \ErrorException
      */
@@ -177,9 +164,14 @@ class ScrapeCommand extends Command
             throw new \ErrorException('Unspecified API key.');
         }
 
-        $this->outputDirectory = $input->getOption('output');
         $this->traktUser = $input->getArgument('trakt-user');
-        $this->quality = $input->getArgument('quality');
+        $this->outputDirectory = $input->getOption('output');
+        $this->quality = $input->getOption('quality');
+
+        if (!in_array($this->quality, self::ALLOWED_QUALITIES)) {
+            throw new \ErrorException('Invalid quality specified.');
+        }
+
         $this->list = $input->getOption('list');
     }
 
@@ -208,6 +200,41 @@ class ScrapeCommand extends Command
     }
 
     /**
+     * @param string     $url
+     * @param array|null $options
+     * @return array
+     */
+    private function getJson(string $url, array $options = null): array
+    {
+        if (!isset($this->guzzle)) {
+            $this->guzzle = new Client();
+        }
+
+        return \GuzzleHttp\json_decode(
+            $this->guzzle->get($url, $options)
+                ->getBody()
+                ->getContents(),
+            true
+        );
+    }
+
+    /**
+     * @param string $question
+     * @return bool
+     */
+    private function askConfirmation(string $question): bool
+    {
+        $question = new ConfirmationQuestion(
+            $question,
+            false
+        );
+
+        return $this
+            ->getHelper('question')
+            ->ask($this->input, $this->output, $question);
+    }
+
+    /**
      * Download the torrent files from YTS
      */
     private function downloadTorrents(): void
@@ -232,21 +259,16 @@ class ScrapeCommand extends Command
                 foreach ($current['torrents'] as $torrent) {
                     if ($torrent['quality'] === $this->quality) {
                         $this->output->writeln(
-                            'Downloading: '.$current['title_long'].
-                            ' ['.$current['imdb_code'].']'.
+                            '<comment>Downloading:</comment> '.$current['title_long'].
                             ' in '.$torrent['quality']
                         );
 
-                        $outputFile = $this->outputDirectory.DIRECTORY_SEPARATOR.$torrent['title_long'].'.torrent';
+                        $outputFile = $this->outputDirectory.DIRECTORY_SEPARATOR.
+                            $current['title_long'].' '.$torrent['quality'].'.torrent';
 
-                        $creationStatus = file_put_contents(
-                            $outputFile,
-                            file_get_contents($torrent['url'])
-                        );
-
-                        if (!$creationStatus) {
+                        if (!$this->getTorrentFile($torrent['url'], $outputFile)) {
                             $this->output->writeln(
-                                '<error>Failed to download '.$current['title_long'].'</error>'
+                                '<error>Failed to download:</error> '.$current['title_long']
                             );
                         }
 
@@ -258,18 +280,20 @@ class ScrapeCommand extends Command
     }
 
     /**
-     * @param string $question
+     * @param string $url
+     * @param string $downloadPath
      * @return bool
      */
-    private function askConfirmation(string $question): bool
+    private function getTorrentFile(string $url, string $downloadPath): bool
     {
-        $question = new ConfirmationQuestion(
-            $question,
-            false
-        );
+        if (!isset($this->guzzle)) {
+            $this->guzzle = new Client();
+        }
 
-        return $this
-            ->getHelper('question')
-            ->ask($this->input, $this->output, $question);
+        return $this->guzzle
+                ->get($url, [
+                    'sink' => $downloadPath,
+                ])
+                ->getStatusCode() === 200;
     }
 }

@@ -1,3 +1,6 @@
 build
 composer.lock
 vendor
+bin/trakt-to-yts.phar
+bin/trakt-to-yts.phar.sig
+torrents
