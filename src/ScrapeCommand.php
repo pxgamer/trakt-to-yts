@@ -160,7 +160,8 @@ class ScrapeCommand extends Command
         return \GuzzleHttp\json_decode(
             $this->guzzle->get($url, $options)
                          ->getBody()
-                         ->getContents()
+                         ->getContents(),
+            true
         );
     }
 
@@ -216,36 +217,36 @@ class ScrapeCommand extends Command
         }
 
         foreach ($this->listData as $datum) {
-            if (!$datum->movie->ids->imdb) {
+            if (!$datum['movie']['ids']['imdb']) {
                 continue;
             }
 
             $ytsData = $this->getJson(
                 self::YTS_API_URI.'/list_movies.json?query_term='.
-                $datum->movie->ids->imdb.(isset($this->quality) ? '&quality='.$this->quality : '')
+                $datum['movie']['ids']['imdb'].(isset($this->quality) ? '&quality='.$this->quality : '')
             );
 
-            if (isset($ytsData->data->movies[0])) {
-                $current = $ytsData->data->movies[0];
+            if (isset($ytsData['data']['movies'][0])) {
+                $current = $ytsData['data']['movies'][0];
 
-                foreach ($current->torrents as $torrent) {
-                    if ($torrent->quality === $this->quality) {
+                foreach ($current['torrents'] as $torrent) {
+                    if ($torrent['quality'] === $this->quality) {
                         $this->output->writeln(
-                            'Downloading: '.$current->title_long.
-                            ' ['.$current->imdb_code.']'.
-                            ' in '.$torrent->quality
+                            'Downloading: '.$current['title_long'].
+                            ' ['.$current['imdb_code'].']'.
+                            ' in '.$torrent['quality']
                         );
 
-                        $outputFile = $this->outputDirectory.DIRECTORY_SEPARATOR.$torrent->title_long.'.torrent';
+                        $outputFile = $this->outputDirectory.DIRECTORY_SEPARATOR.$torrent['title_long'].'.torrent';
 
                         $creationStatus = file_put_contents(
                             $outputFile,
-                            file_get_contents($torrent->url)
+                            file_get_contents($torrent['url'])
                         );
 
                         if (!$creationStatus) {
                             $this->output->writeln(
-                                '<error>Failed to download '.$current->title_long.'</error>'
+                                '<error>Failed to download '.$current['title_long'].'</error>'
                             );
                         }
 
