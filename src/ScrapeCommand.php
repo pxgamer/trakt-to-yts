@@ -146,6 +146,11 @@ class ScrapeCommand extends Command
         }
     }
 
+    /**
+     * @param string     $url
+     * @param array|null $options
+     * @return array
+     */
     private function getJson(string $url, array $options = null): array
     {
         if (!isset($this->guzzle)) {
@@ -201,6 +206,9 @@ class ScrapeCommand extends Command
         }
     }
 
+    /**
+     * Download the torrent files from YTS
+     */
     private function downloadTorrents(): void
     {
         if (!is_dir($this->outputDirectory)) {
@@ -248,6 +256,10 @@ class ScrapeCommand extends Command
         }
     }
 
+    /**
+     * @param string $question
+     * @return bool
+     */
     private function askConfirmation(string $question): bool
     {
         $question = new ConfirmationQuestion(
