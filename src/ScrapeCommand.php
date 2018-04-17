@@ -18,6 +18,11 @@ class ScrapeCommand extends Command
     const TRAKT_API_URI = 'https://api.trakt.tv';
     const TRAKT_MAIN_URI = 'https://trakt.tv';
     const YTS_API_URI = 'https://yts.am/api/v2';
+    const ALLOWED_QUALITIES = [
+        Quality::Q_1080P,
+        Quality::Q_720P,
+        Quality::Q_3D,
+    ];
 
     /**
      * A Trakt API key
@@ -66,7 +71,7 @@ class ScrapeCommand extends Command
      *
      * @var string|null
      */
-    private $quality = '1080p';
+    private $quality;
     /**
      * A Trakt username
      *
@@ -162,6 +167,11 @@ class ScrapeCommand extends Command
         $this->traktUser = $input->getArgument('trakt-user');
         $this->outputDirectory = $input->getOption('output');
         $this->quality = $input->getOption('quality');
+
+        if (!in_array($this->quality, self::ALLOWED_QUALITIES)) {
+            throw new \ErrorException('Invalid quality specified.');
+        }
+
         $this->list = $input->getOption('list');
     }
 
