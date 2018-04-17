@@ -15,12 +15,28 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  */
 class ScrapeCommand extends Command
 {
+    const TRAKT_API_URI = 'https://api.trakt.tv';
+    const TRAKT_MAIN_URI = 'https://trakt.tv';
+    const YTS_API_URI = 'https://yts.am/api/v2';
+
     /**
      * A Trakt API key
      *
      * @var string|null
      */
     private $apiKey;
+    /**
+     * The Guzzle client
+     *
+     * @var Client
+     */
+    private $guzzle;
+    /**
+     * The list id or slug
+     *
+     * @var string
+     */
+    private $list;
     /**
      * The Output interface
      *
@@ -108,18 +124,16 @@ class ScrapeCommand extends Command
         $this->outputDirectory = $input->getOption('output');
         $this->traktUser = $input->getArgument('trakt-user');
         $this->quality = $input->getArgument('quality');
+        $this->list = $input->getArgument('list');
 
-        $listData = \GuzzleHttp\json_decode((new Client())->get(
-            'https://api.trakt.tv/users/'.$this->traktUser.'/watchlist/movies',
+        $listData = $this->getJson(
+            self::TRAKT_API_URI.'/users/'.$this->traktUser.'/watchlist/movies',
             [
                 'headers' => [
                     'trakt-api-version' => 2,
                     'trakt-api-key'     => $this->apiKey,
                 ],
             ]
-        )
-                                                          ->getBody()
-                                                          ->getContents()
         );
 
         if (empty($listData)) {
@@ -127,7 +141,7 @@ class ScrapeCommand extends Command
         }
 
         $this->output->writeln([
-            'List data from https://trakt.tv/users/'.$this->traktUser.'/watchlist',
+            'List data from '.self::TRAKT_MAIN_URI.'/users/'.$this->traktUser.'/watchlist',
             '',
             'Movies: '.count($listData),
         ]);
@@ -144,18 +158,9 @@ class ScrapeCommand extends Command
                     continue;
                 }
 
-                $ytsData = \GuzzleHttp\json_decode((new Client())->get(
-                    'https://yts.am/api/v2/list_movies.json?query_term='.
-                    $datum->movie->ids->imdb.(isset($this->quality) ? '&quality='.$this->quality : ''),
-                    [
-                        'headers' => [
-                            'trakt-api-version' => 2,
-                            'trakt-api-key'     => $this->apiKey,
-                        ],
-                    ]
-                )
-                                                                 ->getBody()
-                                                                 ->getContents()
+                $ytsData = $this->getJson(
+                    self::YTS_API_URI.'/list_movies.json?query_term='.
+                    $datum->movie->ids->imdb.(isset($this->quality) ? '&quality='.$this->quality : '')
                 );
 
                 if (isset($ytsData->data->movies[0])) {
@@ -183,5 +188,18 @@ class ScrapeCommand extends Command
                 }
             }
         }
+    }
+
+    private function getJson(string $url, array $options = null)
+    {
+        if (!isset($this->guzzle)) {
+            $this->guzzle = new Client();
+        }
+
+        return \GuzzleHttp\json_decode(
+            $this->guzzle->get($url, $options)
+                         ->getBody()
+                         ->getContents()
+        );
     }
 }
