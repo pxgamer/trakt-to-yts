@@ -159,10 +159,28 @@ class ScrapeCommand extends Command
 
         return \GuzzleHttp\json_decode(
             $this->guzzle->get($url, $options)
-                         ->getBody()
-                         ->getContents(),
+                ->getBody()
+                ->getContents(),
             true
         );
+    }
+
+    /**
+     * @param string $url
+     * @param string $downloadPath
+     * @return bool
+     */
+    private function getTorrentFile(string $url, string $downloadPath): bool
+    {
+        if (!isset($this->guzzle)) {
+            $this->guzzle = new Client();
+        }
+
+        return $this->guzzle
+                ->get($url, [
+                    'sink' => $downloadPath,
+                ])
+                ->getStatusCode() === 200;
     }
 
     /**
@@ -232,21 +250,16 @@ class ScrapeCommand extends Command
                 foreach ($current['torrents'] as $torrent) {
                     if ($torrent['quality'] === $this->quality) {
                         $this->output->writeln(
-                            'Downloading: '.$current['title_long'].
-                            ' ['.$current['imdb_code'].']'.
+                            '<comment>Downloading:</comment> '.$current['title_long'].
                             ' in '.$torrent['quality']
                         );
 
-                        $outputFile = $this->outputDirectory.DIRECTORY_SEPARATOR.$current['title_long'].'.torrent';
+                        $outputFile = $this->outputDirectory.DIRECTORY_SEPARATOR.
+                            $current['title_long'].' '.$torrent['quality'].'.torrent';
 
-                        $creationStatus = file_put_contents(
-                            $outputFile,
-                            file_get_contents($torrent['url'])
-                        );
-
-                        if (!$creationStatus) {
+                        if (!$this->getTorrentFile($torrent['url'], $outputFile)) {
                             $this->output->writeln(
-                                '<error>Failed to download '.$current['title_long'].'</error>'
+                                '<error>Failed to download:</error> '.$current['title_long']
                             );
                         }
 
