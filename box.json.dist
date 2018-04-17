@@ -1,0 +1,19 @@
+{
+    "chmod": "0755",
+    "main": "bin/trakt-to-yts",
+    "output": "bin/trakt-to-yts.phar",
+    "directories": [
+        "src"
+    ],
+    "finder": [
+        {
+            "name": "*.php",
+            "exclude": [
+                "tests"
+            ],
+            "in": "vendor"
+        }
+    ],
+    "git-tag": "git-version",
+    "stub": true
+}

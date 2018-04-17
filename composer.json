@@ -1,0 +1,33 @@
+{
+    "name": "pxgamer/trakt-to-yts",
+    "type": "library",
+    "description": "A CLI for downloading Trakt lists from YTS.",
+    "license": "MIT",
+    "bin": [
+        "bin/trakt-to-yts"
+    ],
+    "require": {
+        "php": "^7.1",
+        "guzzlehttp/guzzle": "^6.3",
+        "symfony/console": "^3.0 || ^4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0 || ^7.0",
+        "squizlabs/php_codesniffer": "^2.3 || ^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "pxgamer\\TraktToYts\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "pxgamer\\TraktToYts\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "check-style": "phpcs -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src tests",
+        "fix-style": "phpcbf -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src tests"
+    }
+}
