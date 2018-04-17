@@ -115,16 +115,8 @@ class ScrapeCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->output = $output;
-        $this->apiKey = $input->getOption('key') ?? getenv('TRAKT_API_KEY');
 
-        if (!$this->apiKey) {
-            throw new \ErrorException('Unspecified API key.');
-        }
-
-        $this->outputDirectory = $input->getOption('output');
-        $this->traktUser = $input->getArgument('trakt-user');
-        $this->quality = $input->getArgument('quality');
-        $this->list = $input->getOption('list');
+        $this->parseInput($input);
 
         $listData = $this->getJson(
             self::TRAKT_API_URI.'/users/'.$this->traktUser.'/watchlist/movies',
@@ -201,5 +193,23 @@ class ScrapeCommand extends Command
                          ->getBody()
                          ->getContents()
         );
+    }
+
+    /**
+     * @param InputInterface $input
+     * @throws \ErrorException
+     */
+    private function parseInput(InputInterface $input)
+    {
+        $this->apiKey = $input->getOption('key') ?? getenv('TRAKT_API_KEY');
+
+        if (!$this->apiKey) {
+            throw new \ErrorException('Unspecified API key.');
+        }
+
+        $this->outputDirectory = $input->getOption('output');
+        $this->traktUser = $input->getArgument('trakt-user');
+        $this->quality = $input->getArgument('quality');
+        $this->list = $input->getOption('list');
     }
 }
