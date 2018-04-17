@@ -79,7 +79,7 @@ class ScrapeCommand extends Command
      *
      * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('scrape')
@@ -124,7 +124,7 @@ class ScrapeCommand extends Command
      * @return void
      * @throws \Exception
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $this->input = $input;
         $this->output = $output;
@@ -146,7 +146,7 @@ class ScrapeCommand extends Command
         }
     }
 
-    private function getJson(string $url, array $options = null)
+    private function getJson(string $url, array $options = null): array
     {
         if (!isset($this->guzzle)) {
             $this->guzzle = new Client();
@@ -163,7 +163,7 @@ class ScrapeCommand extends Command
      * @param InputInterface $input
      * @throws \ErrorException
      */
-    private function parseInput(InputInterface $input)
+    private function parseInput(InputInterface $input): void
     {
         $this->apiKey = $input->getOption('key') ?? getenv('TRAKT_API_KEY');
 
@@ -180,7 +180,7 @@ class ScrapeCommand extends Command
     /**
      * @throws \ErrorException
      */
-    private function getListData()
+    private function getListData(): void
     {
         $listUrl = $this->list ?
             self::TRAKT_API_URI.'/users/'.$this->traktUser.'/lists/'.$this->list.'/items/movies' :
@@ -201,7 +201,7 @@ class ScrapeCommand extends Command
         }
     }
 
-    private function downloadTorrents()
+    private function downloadTorrents(): void
     {
         if (!is_dir($this->outputDirectory)) {
             mkdir($this->outputDirectory);
@@ -248,7 +248,7 @@ class ScrapeCommand extends Command
         }
     }
 
-    private function askConfirmation(string $question)
+    private function askConfirmation(string $question): bool
     {
         $question = new ConfirmationQuestion(
             $question,
