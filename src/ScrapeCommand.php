@@ -237,7 +237,7 @@ class ScrapeCommand extends Command
                             ' in '.$torrent['quality']
                         );
 
-                        $outputFile = $this->outputDirectory.DIRECTORY_SEPARATOR.$torrent['title_long'].'.torrent';
+                        $outputFile = $this->outputDirectory.DIRECTORY_SEPARATOR.$current['title_long'].'.torrent';
 
                         $creationStatus = file_put_contents(
                             $outputFile,
