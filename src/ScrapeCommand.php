@@ -31,7 +31,7 @@ class ScrapeCommand extends Command
     {
         $this
             ->setName('scrape')
-            ->setDescription('Scrape a user\'s watchlist from Trakt to YTS.')
+            ->setDescription('Scrape a user\'s list from Trakt to YTS.')
             ->addArgument(
                 'trakt-user',
                 InputArgument::REQUIRED,
