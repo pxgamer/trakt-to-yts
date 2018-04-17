@@ -32,6 +32,12 @@ class ScrapeCommand extends Command
      */
     private $guzzle;
     /**
+     * The Input interface
+     *
+     * @var InputInterface
+     */
+    private $input;
+    /**
      * The list id or slug
      *
      * @var string
@@ -120,6 +126,7 @@ class ScrapeCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->input = $input;
         $this->output = $output;
 
         $this->parseInput($input);
@@ -134,9 +141,7 @@ class ScrapeCommand extends Command
             'Movies: '.count($this->listData),
         ]);
 
-        $downloadQuestion = new ConfirmationQuestion('Download torrent files for this list? (y/N) ', false);
-
-        if ($this->getHelper('question')->ask($input, $output, $downloadQuestion)) {
+        if ($this->askConfirmation('Download torrent files for this list? (y/N) ')) {
             $this->downloadTorrents();
         }
     }
@@ -241,5 +246,17 @@ class ScrapeCommand extends Command
                 }
             }
         }
+    }
+
+    private function askConfirmation(string $question)
+    {
+        $question = new ConfirmationQuestion(
+            $question,
+            false
+        );
+
+        return $this
+            ->getHelper('question')
+            ->ask($this->input, $this->output, $question);
     }
 }
