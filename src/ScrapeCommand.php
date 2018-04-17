@@ -21,6 +21,30 @@ class ScrapeCommand extends Command
      * @var string|null
      */
     private $apiKey;
+    /**
+     * The Output interface
+     *
+     * @var OutputInterface
+     */
+    private $output;
+    /**
+     * The directory to download torrent files to
+     *
+     * @var string|null
+     */
+    private $outputDirectory = 'torrents';
+    /**
+     * The quality to download from YTS
+     *
+     * @var string|null
+     */
+    private $quality = '1080p';
+    /**
+     * A Trakt username
+     *
+     * @var string
+     */
+    private $traktUser;
 
     /**
      * Configure the command options.
@@ -35,13 +59,19 @@ class ScrapeCommand extends Command
             ->addArgument(
                 'trakt-user',
                 InputArgument::REQUIRED,
-                'The Trakt username for the watchlist.'
+                'The Trakt username for the list.'
             )
             ->addOption(
                 'key',
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Your Trakt API key. Defaults to use the `TRAKT_API_KEY` environment variable if not provided.'
+            )
+            ->addOption(
+                'list',
+                'l',
+                InputOption::VALUE_REQUIRED,
+                'A custom list id or stub (defaults to wishlist).'
             )
             ->addOption(
                 'output',
@@ -68,18 +98,19 @@ class ScrapeCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->output = $output;
         $this->apiKey = $input->getOption('key') ?? getenv('TRAKT_API_KEY');
 
         if (!$this->apiKey) {
             throw new \ErrorException('Unspecified API key.');
         }
 
-        $outputDirectory = $input->getOption('output');
-        $traktUser = $input->getArgument('trakt-user');
-        $quality = $input->getArgument('quality');
+        $this->outputDirectory = $input->getOption('output');
+        $this->traktUser = $input->getArgument('trakt-user');
+        $this->quality = $input->getArgument('quality');
 
         $listData = \GuzzleHttp\json_decode((new Client())->get(
-            'https://api.trakt.tv/users/'.$traktUser.'/watchlist/movies',
+            'https://api.trakt.tv/users/'.$this->traktUser.'/watchlist/movies',
             [
                 'headers' => [
                     'trakt-api-version' => 2,
@@ -92,11 +123,11 @@ class ScrapeCommand extends Command
         );
 
         if (empty($listData)) {
-            $output->writeln('<info>No movies were found in this list.</info>');
+            $this->output->writeln('<info>No movies were found in this list.</info>');
         }
 
-        $output->writeln([
-            'List data from https://trakt.tv/users/'.$traktUser.'/watchlist',
+        $this->output->writeln([
+            'List data from https://trakt.tv/users/'.$this->traktUser.'/watchlist',
             '',
             'Movies: '.count($listData),
         ]);
@@ -104,8 +135,8 @@ class ScrapeCommand extends Command
         $downloadQuestion = new ConfirmationQuestion('Download torrent files for this list? (y/N) ', false);
 
         if ($this->getHelper('question')->ask($input, $output, $downloadQuestion)) {
-            if (!is_dir($outputDirectory)) {
-                mkdir($outputDirectory);
+            if (!is_dir($this->outputDirectory)) {
+                mkdir($this->outputDirectory);
             }
 
             foreach ($listData as $datum) {
@@ -115,7 +146,7 @@ class ScrapeCommand extends Command
 
                 $ytsData = \GuzzleHttp\json_decode((new Client())->get(
                     'https://yts.am/api/v2/list_movies.json?query_term='.
-                    $datum->movie->ids->imdb.(isset($quality) ? '&quality='.$quality : ''),
+                    $datum->movie->ids->imdb.(isset($this->quality) ? '&quality='.$this->quality : ''),
                     [
                         'headers' => [
                             'trakt-api-version' => 2,
@@ -130,13 +161,21 @@ class ScrapeCommand extends Command
                 if (isset($ytsData->data->movies[0])) {
                     $current = $ytsData->data->movies[0];
 
-                    $output->writeln('Downloading: '.$current->title_long.' ['.$current->imdb_code.']');
                     foreach ($current->torrents as $torrent) {
-                        if ($torrent->quality === $quality) {
+                        if ($torrent->quality === $this->quality) {
+                            $this->output->writeln('Downloading: '.$current->title_long.
+                                                   ' ['.$current->imdb_code.'] in '.$torrent->quality);
+
+                            $outputFile = $this->outputDirectory.DIRECTORY_SEPARATOR.$torrent->title_long.'.torrent';
+
                             file_put_contents(
-                                $outputDirectory.DIRECTORY_SEPARATOR.$torrent->hash.'.torrent',
+                                $outputFile,
                                 file_get_contents($torrent->url)
                             );
+
+                            if (!file_exists($outputFile) || filesize($outputFile) < 1) {
+                                $this->output->writeln('<error>Failed to download '.$current->title_long.'</error>');
+                            }
 
                             break;
                         }
