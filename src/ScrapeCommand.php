@@ -275,6 +275,10 @@ class ScrapeCommand extends Command
                         break;
                     }
                 }
+            } else {
+                $this->output->writeln(
+                    '<error>No YTS release:</error> '.$datum['movie']['title']
+                );
             }
         }
     }
