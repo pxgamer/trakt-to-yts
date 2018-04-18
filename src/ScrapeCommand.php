@@ -259,7 +259,7 @@ class ScrapeCommand extends Command
                 foreach ($current['torrents'] as $torrent) {
                     if ($torrent['quality'] === $this->quality) {
                         $this->output->writeln(
-                            '<comment>Downloading:</comment> '.$current['title_long'].
+                            '<info>Downloading:</info> '.$current['title_long'].
                             ' in '.$torrent['quality']
                         );
 
@@ -277,7 +277,7 @@ class ScrapeCommand extends Command
                 }
             } else {
                 $this->output->writeln(
-                    '<error>No YTS release:</error> '.$datum['movie']['title']
+                    '<comment>No YTS release:</comment> '.$datum['movie']['title']
                 );
             }
         }
