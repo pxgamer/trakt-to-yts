@@ -15,17 +15,17 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  */
 class ScrapeCommand extends Command
 {
-    const ALLOWED_QUALITIES = [
+    public const ALLOWED_QUALITIES = [
         Quality::Q_1080P,
         Quality::Q_720P,
         Quality::Q_3D,
     ];
-    const STATUS_DOWNLOADED = 'downloaded';
-    const STATUS_FAILED = 'failed';
-    const STATUS_NO_RELEASE = 'no-release';
-    const TRAKT_API_URI = 'https://api.trakt.tv';
-    const TRAKT_MAIN_URI = 'https://trakt.tv';
-    const YTS_API_URI = 'https://yts.am/api/v2';
+    public const STATUS_DOWNLOADED = 'downloaded';
+    public const STATUS_FAILED = 'failed';
+    public const STATUS_NO_RELEASE = 'no-release';
+    public const TRAKT_API_URI = 'https://api.trakt.tv';
+    public const TRAKT_MAIN_URI = 'https://trakt.tv';
+    public const YTS_API_URI = 'https://yts.am/api/v2';
 
     /**
      * A Trakt API key
