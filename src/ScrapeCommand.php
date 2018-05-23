@@ -15,14 +15,17 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  */
 class ScrapeCommand extends Command
 {
-    const TRAKT_API_URI = 'https://api.trakt.tv';
-    const TRAKT_MAIN_URI = 'https://trakt.tv';
-    const YTS_API_URI = 'https://yts.am/api/v2';
     const ALLOWED_QUALITIES = [
         Quality::Q_1080P,
         Quality::Q_720P,
         Quality::Q_3D,
     ];
+    const STATUS_DOWNLOADED = 'downloaded';
+    const STATUS_FAILED = 'failed';
+    const STATUS_NO_RELEASE = 'no-release';
+    const TRAKT_API_URI = 'https://api.trakt.tv';
+    const TRAKT_MAIN_URI = 'https://trakt.tv';
+    const YTS_API_URI = 'https://yts.am/api/v2';
 
     /**
      * A Trakt API key
@@ -72,6 +75,16 @@ class ScrapeCommand extends Command
      * @var string|null
      */
     private $quality;
+    /**
+     * Recorded statistics for the app
+     *
+     * @var array
+     */
+    private $statistics = [
+        self::STATUS_DOWNLOADED => 0,
+        self::STATUS_FAILED     => 0,
+        self::STATUS_NO_RELEASE => 0,
+    ];
     /**
      * A Trakt username
      *
@@ -270,7 +283,10 @@ class ScrapeCommand extends Command
                             $this->output->writeln(
                                 '<error>Failed to download:</error> '.$current['title_long']
                             );
+                            $this->statistics[self::STATUS_FAILED]++;
                         }
+
+                        $this->statistics[self::STATUS_DOWNLOADED]++;
 
                         break;
                     }
@@ -279,6 +295,7 @@ class ScrapeCommand extends Command
                 $this->output->writeln(
                     '<comment>No YTS release:</comment> '.$datum['movie']['title']
                 );
+                $this->statistics[self::STATUS_NO_RELEASE]++;
             }
         }
     }
