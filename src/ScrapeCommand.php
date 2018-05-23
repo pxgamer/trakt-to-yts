@@ -15,14 +15,17 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  */
 class ScrapeCommand extends Command
 {
-    const TRAKT_API_URI = 'https://api.trakt.tv';
-    const TRAKT_MAIN_URI = 'https://trakt.tv';
-    const YTS_API_URI = 'https://yts.am/api/v2';
-    const ALLOWED_QUALITIES = [
+    public const ALLOWED_QUALITIES = [
         Quality::Q_1080P,
         Quality::Q_720P,
         Quality::Q_3D,
     ];
+    public const STATUS_DOWNLOADED = 'downloaded';
+    public const STATUS_FAILED = 'failed';
+    public const STATUS_NO_RELEASE = 'no-release';
+    public const TRAKT_API_URI = 'https://api.trakt.tv';
+    public const TRAKT_MAIN_URI = 'https://trakt.tv';
+    public const YTS_API_URI = 'https://yts.am/api/v2';
 
     /**
      * A Trakt API key
@@ -73,6 +76,16 @@ class ScrapeCommand extends Command
      */
     private $quality;
     /**
+     * Recorded statistics for the app
+     *
+     * @var array
+     */
+    private $statistics = [
+        self::STATUS_DOWNLOADED => 0,
+        self::STATUS_FAILED     => 0,
+        self::STATUS_NO_RELEASE => 0,
+    ];
+    /**
      * A Trakt username
      *
      * @var string
@@ -119,6 +132,12 @@ class ScrapeCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'The quality to download (720p, 1080p or 3D).',
                 '1080p'
+            )
+            ->addOption(
+                'statistics',
+                null,
+                InputOption::VALUE_NONE,
+                'Display statistics information output.'
             );
     }
 
@@ -149,6 +168,8 @@ class ScrapeCommand extends Command
 
         if ($this->askConfirmation('Download torrent files for this list? (y/N) ')) {
             $this->downloadTorrents();
+
+            $this->statistics();
         }
     }
 
@@ -259,7 +280,7 @@ class ScrapeCommand extends Command
                 foreach ($current['torrents'] as $torrent) {
                     if ($torrent['quality'] === $this->quality) {
                         $this->output->writeln(
-                            '<comment>Downloading:</comment> '.$current['title_long'].
+                            '<info>Downloading:</info> '.$current['title_long'].
                             ' in '.$torrent['quality']
                         );
 
@@ -270,11 +291,19 @@ class ScrapeCommand extends Command
                             $this->output->writeln(
                                 '<error>Failed to download:</error> '.$current['title_long']
                             );
+                            $this->statistics[self::STATUS_FAILED]++;
                         }
+
+                        $this->statistics[self::STATUS_DOWNLOADED]++;
 
                         break;
                     }
                 }
+            } else {
+                $this->output->writeln(
+                    '<comment>No YTS release:</comment> '.$datum['movie']['title']
+                );
+                $this->statistics[self::STATUS_NO_RELEASE]++;
             }
         }
     }
@@ -295,5 +324,21 @@ class ScrapeCommand extends Command
                     'sink' => $downloadPath,
                 ])
                 ->getStatusCode() === 200;
+    }
+
+    /**
+     * Display statistics information.
+     */
+    private function statistics()
+    {
+        if ($this->input->getOption('statistics')) {
+            $this->output->writeln([
+                '',
+                '<options=bold,underscore>Statistics</>',
+                '<info>Downloaded: </info>'.$this->statistics[self::STATUS_DOWNLOADED],
+                '<comment>No release: </comment>'.$this->statistics[self::STATUS_NO_RELEASE],
+                '<comment>Failed: </comment>    '.$this->statistics[self::STATUS_FAILED],
+            ]);
+        }
     }
 }

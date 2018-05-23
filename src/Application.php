@@ -9,8 +9,8 @@ use Symfony\Component\Console\Application as BaseApplication;
  */
 class Application extends BaseApplication
 {
-    const NAME = 'Trakt to YTS';
-    const VERSION = '@git-version@';
+    public const NAME = 'Trakt to YTS';
+    public const VERSION = '@git-version@';
 
     /**
      * Application constructor.
