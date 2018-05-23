@@ -137,8 +137,7 @@ class ScrapeCommand extends Command
                 'statistics',
                 null,
                 InputOption::VALUE_NONE,
-                'Display statistics information output.',
-                false
+                'Display statistics information output.'
             );
     }
 
@@ -169,6 +168,8 @@ class ScrapeCommand extends Command
 
         if ($this->askConfirmation('Download torrent files for this list? (y/N) ')) {
             $this->downloadTorrents();
+
+            $this->statistics();
         }
     }
 
@@ -323,5 +324,21 @@ class ScrapeCommand extends Command
                     'sink' => $downloadPath,
                 ])
                 ->getStatusCode() === 200;
+    }
+
+    /**
+     * Display statistics information.
+     */
+    private function statistics()
+    {
+        if ($this->input->getOption('statistics')) {
+            $this->output->writeln([
+                '',
+                '<options=bold,underscore>Statistics</>',
+                '<info>Downloaded: </info>'.$this->statistics[self::STATUS_DOWNLOADED],
+                '<comment>No release: </comment>'.$this->statistics[self::STATUS_NO_RELEASE],
+                '<comment>Failed: </comment>    '.$this->statistics[self::STATUS_FAILED],
+            ]);
+        }
     }
 }
