@@ -132,6 +132,13 @@ class ScrapeCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'The quality to download (720p, 1080p or 3D).',
                 '1080p'
+            )
+            ->addOption(
+                'statistics',
+                null,
+                InputOption::VALUE_NONE,
+                'Display statistics information output.',
+                false
             );
     }
 
