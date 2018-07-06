@@ -4,6 +4,11 @@ All notable changes to `trakt-to-yts` will be documented in this file.
 
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com) principles.
 
+## v0.3.1 - 2018-07-06
+
+### Added
+- Add automated Travis Phar releases ([#8](https://github.com/pxgamer/trakt-to-yts/issues/8))
+
 ## v0.3.0 - 2018-05-23
 
 ### Added
