@@ -21,6 +21,19 @@ before_script:
 script:
   - vendor/bin/phpcs --standard=psr2 src/
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
+  - vendor/bin/box compile
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+  - vendor/bin/box info bin/trakt-to-yts.phar
+
+deploy:
+    provider: releases
+    api_key:
+        secure: $GITHUB_DEPLOY_KEY
+    file: bin/trakt-to-yts.phar
+    skip_cleanup: true
+    on:
+        repo: pxgamer/trakt-to-yts
+        tags: true
+        php: '7.1'
