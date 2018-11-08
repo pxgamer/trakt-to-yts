@@ -6,6 +6,10 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com) principl
 
 ## [Unreleased]
 
+### Changed
+- Update Box to v3.2 ([b3d237f4](https://github.com/pxgamer/trakt-to-yts/commit/b3d237f477f344024faa4691a3433c9438be3e1d))
+- Optimise function imports ([20c312c6](https://github.com/pxgamer/trakt-to-yts/commit/20c312c698eb157c99eec2678a80d93ebbfe143a))
+
 ## [v0.3.1] - 2018-07-06
 
 ### Added
