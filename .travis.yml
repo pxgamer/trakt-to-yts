@@ -31,11 +31,14 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
   - vendor/bin/box info bin/trakt-to-yts.phar
 
+before_deploy:
+- mv bin/trakt-to-yts.phar bin/trakt-to-yts-${TRAVIS_TAG}.phar
+
 deploy:
     provider: releases
     api_key:
         secure: $GITHUB_DEPLOY_KEY
-    file: bin/trakt-to-yts.phar
+    file: bin/trakt-to-yts-${TRAVIS_TAG}.phar
     skip_cleanup: true
     on:
         repo: pxgamer/trakt-to-yts
