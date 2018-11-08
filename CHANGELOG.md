@@ -6,6 +6,8 @@ Updates should follow the [Keep a CHANGELOG](https://keepachangelog.com) princip
 
 ## [Unreleased]
 
+## [v1.0.0] - 2018-11-08
+
 ### Changed
 - Update Box to v3.2 ([b3d237f4](https://github.com/pxgamer/trakt-to-yts/commit/b3d237f477f344024faa4691a3433c9438be3e1d))
 - Optimise function imports ([20c312c6](https://github.com/pxgamer/trakt-to-yts/commit/20c312c698eb157c99eec2678a80d93ebbfe143a))
@@ -38,6 +40,7 @@ Updates should follow the [Keep a CHANGELOG](https://keepachangelog.com) princip
 - Initial release
 
 [Unreleased]: https://github.com/pxgamer/trakt-to-yts/compare/master...develop
+[v1.0.0]: https://github.com/pxgamer/trakt-to-yts/compare/v0.3.1...v1.0.0
 [v0.3.1]: https://github.com/pxgamer/trakt-to-yts/compare/v0.3.0...v0.3.1
 [v0.3.0]: https://github.com/pxgamer/trakt-to-yts/compare/v0.2.0...v0.3.0
 [v0.2.0]: https://github.com/pxgamer/trakt-to-yts/compare/v0.1.0...v0.2.0
