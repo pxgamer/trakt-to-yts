@@ -9,6 +9,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use function count;
+use function GuzzleHttp\json_decode;
+use function in_array;
+use function is_dir;
+use function mkdir;
+use function sprintf;
 
 /**
  * Class RunCommand
@@ -189,7 +195,7 @@ class ScrapeCommand extends Command
         $this->outputDirectory = $input->getOption('output');
         $this->quality = $input->getOption('quality');
 
-        if (!in_array($this->quality, self::ALLOWED_QUALITIES)) {
+        if (!in_array($this->quality, self::ALLOWED_QUALITIES, true)) {
             throw new \ErrorException('Invalid quality specified.');
         }
 
@@ -231,7 +237,7 @@ class ScrapeCommand extends Command
             $this->guzzle = new Client();
         }
 
-        return \GuzzleHttp\json_decode(
+        return json_decode(
             $this->guzzle->get($url, $options)
                 ->getBody()
                 ->getContents(),
