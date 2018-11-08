@@ -227,7 +227,7 @@ class ScrapeCommand extends Command
      */
     private function getJson(string $url, array $options = null): array
     {
-        if (!isset($this->guzzle)) {
+        if ($this->guzzle === null) {
             $this->guzzle = new Client();
         }
 
@@ -274,7 +274,7 @@ class ScrapeCommand extends Command
 
             $ytsData = $this->getJson(
                 self::YTS_API_URI.'/list_movies.json?query_term='.
-                $datum['movie']['ids']['imdb'].(isset($this->quality) ? '&quality='.$this->quality : '')
+                $datum['movie']['ids']['imdb'].($this->quality !== null ? '&quality='.$this->quality : '')
             );
 
             if (isset($ytsData['data']['movies'][0])) {
@@ -318,7 +318,7 @@ class ScrapeCommand extends Command
      */
     private function getTorrentFile(string $url, string $downloadPath): bool
     {
-        if (!isset($this->guzzle)) {
+        if ($this->guzzle === null) {
             $this->guzzle = new Client();
         }
 
@@ -332,7 +332,7 @@ class ScrapeCommand extends Command
     /**
      * Display statistics information.
      */
-    private function statistics()
+    private function statistics(): void
     {
         if ($this->input->getOption('statistics')) {
             $this->output->writeln([
