@@ -11,7 +11,7 @@ matrix:
     - php: nightly
 
 # This triggers builds to run on the new TravisCI infrastructure.
-# See: http://docs.travis-ci.com/user/workers/container-based-infrastructure/
+# See: https://docs.travis-ci.com/user/reference/trusty#Container-based-with-sudo%3A-false
 sudo: false
 
 ## Cache composer
@@ -29,7 +29,6 @@ script:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-  - vendor/bin/box info bin/trakt-to-yts.phar
 
 before_deploy:
 - mv bin/trakt-to-yts.phar bin/trakt-to-yts-${TRAVIS_TAG}.phar
