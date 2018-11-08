@@ -9,6 +9,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use function count;
+use function GuzzleHttp\json_decode;
+use function in_array;
+use function is_dir;
+use function mkdir;
+use function sprintf;
 
 /**
  * Class RunCommand
@@ -189,7 +195,7 @@ class ScrapeCommand extends Command
         $this->outputDirectory = $input->getOption('output');
         $this->quality = $input->getOption('quality');
 
-        if (!in_array($this->quality, self::ALLOWED_QUALITIES)) {
+        if (!in_array($this->quality, self::ALLOWED_QUALITIES, true)) {
             throw new \ErrorException('Invalid quality specified.');
         }
 
@@ -227,11 +233,11 @@ class ScrapeCommand extends Command
      */
     private function getJson(string $url, array $options = null): array
     {
-        if (!isset($this->guzzle)) {
+        if ($this->guzzle === null) {
             $this->guzzle = new Client();
         }
 
-        return \GuzzleHttp\json_decode(
+        return json_decode(
             $this->guzzle->get($url, $options)
                 ->getBody()
                 ->getContents(),
@@ -245,14 +251,14 @@ class ScrapeCommand extends Command
      */
     private function askConfirmation(string $question): bool
     {
-        $question = new ConfirmationQuestion(
+        $questionHelper = new ConfirmationQuestion(
             $question,
             false
         );
 
         return $this
             ->getHelper('question')
-            ->ask($this->input, $this->output, $question);
+            ->ask($this->input, $this->output, $questionHelper);
     }
 
     /**
@@ -260,8 +266,11 @@ class ScrapeCommand extends Command
      */
     private function downloadTorrents(): void
     {
-        if (!is_dir($this->outputDirectory)) {
-            mkdir($this->outputDirectory);
+        if (!is_dir($this->outputDirectory) &&
+            !mkdir($concurrentDirectory = $this->outputDirectory) &&
+            !is_dir($concurrentDirectory)
+        ) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
 
         foreach ($this->listData as $datum) {
@@ -271,7 +280,7 @@ class ScrapeCommand extends Command
 
             $ytsData = $this->getJson(
                 self::YTS_API_URI.'/list_movies.json?query_term='.
-                $datum['movie']['ids']['imdb'].(isset($this->quality) ? '&quality='.$this->quality : '')
+                $datum['movie']['ids']['imdb'].($this->quality !== null ? '&quality='.$this->quality : '')
             );
 
             if (isset($ytsData['data']['movies'][0])) {
@@ -315,7 +324,7 @@ class ScrapeCommand extends Command
      */
     private function getTorrentFile(string $url, string $downloadPath): bool
     {
-        if (!isset($this->guzzle)) {
+        if ($this->guzzle === null) {
             $this->guzzle = new Client();
         }
 
@@ -329,7 +338,7 @@ class ScrapeCommand extends Command
     /**
      * Display statistics information.
      */
-    private function statistics()
+    private function statistics(): void
     {
         if ($this->input->getOption('statistics')) {
             $this->output->writeln([
