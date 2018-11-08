@@ -4,12 +4,14 @@ All notable changes to `trakt-to-yts` will be documented in this file.
 
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com) principles.
 
-## v0.3.1 - 2018-07-06
+## [Unreleased]
+
+## [v0.3.1] - 2018-07-06
 
 ### Added
 - Add automated Travis Phar releases ([#8](https://github.com/pxgamer/trakt-to-yts/issues/8))
 
-## v0.3.0 - 2018-05-23
+## [v0.3.0] - 2018-05-23
 
 ### Added
 - Add a notice for torrents that fail to be shown ([#5](https://github.com/pxgamer/trakt-to-yts/issues/5))
@@ -18,7 +20,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com) principl
 ### Changed
 - Change to add visibility keywords to all class constants ([22b41a0](https://github.com/pxgamer/trakt-to-yts/commit/22b41a0f017b60a0bc59bf11c2415d24a4f8c003))
 
-## v0.2.0 - 2018-04-17
+## [v0.2.0] - 2018-04-17
 
 ### Changed
 - Change to use Guzzle for torrent downloads ([#4](https://github.com/pxgamer/trakt-to-yts/issues/4))
@@ -30,3 +32,8 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com) principl
 
 ### Added
 - Initial release
+
+[Unreleased]: https://github.com/pxgamer/trakt-to-yts/compare/master...develop
+[v0.3.1]: https://github.com/pxgamer/trakt-to-yts/compare/v0.3.0...v0.3.1
+[v0.3.0]: https://github.com/pxgamer/trakt-to-yts/compare/v0.2.0...v0.3.0
+[v0.2.0]: https://github.com/pxgamer/trakt-to-yts/compare/v0.1.0...v0.2.0
