@@ -20,9 +20,15 @@ class Application extends BaseApplication
      */
     public function __construct($name = null, $version = null)
     {
+        if (!$version) {
+            $version = static::VERSION === '@'.'git-version@' ?
+                'source' :
+                static::VERSION;
+        }
+
         parent::__construct(
             $name ?: static::NAME,
-            $version ?: (static::VERSION === '@' . 'git-version@' ? 'source' : static::VERSION)
+            $version
         );
 
         $this->setDefaultCommand('scrape', true);
@@ -31,7 +37,7 @@ class Application extends BaseApplication
     /**
      * @return array|\Symfony\Component\Console\Command\Command[]
      */
-    protected function getDefaultCommands()
+    protected function getDefaultCommands(): array
     {
         $commands = parent::getDefaultCommands();
 
