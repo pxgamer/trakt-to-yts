@@ -245,14 +245,14 @@ class ScrapeCommand extends Command
      */
     private function askConfirmation(string $question): bool
     {
-        $question = new ConfirmationQuestion(
+        $questionHelper = new ConfirmationQuestion(
             $question,
             false
         );
 
         return $this
             ->getHelper('question')
-            ->ask($this->input, $this->output, $question);
+            ->ask($this->input, $this->output, $questionHelper);
     }
 
     /**
@@ -260,8 +260,11 @@ class ScrapeCommand extends Command
      */
     private function downloadTorrents(): void
     {
-        if (!is_dir($this->outputDirectory)) {
-            mkdir($this->outputDirectory);
+        if (!is_dir($this->outputDirectory) &&
+            !mkdir($concurrentDirectory = $this->outputDirectory) &&
+            !is_dir($concurrentDirectory)
+        ) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
 
         foreach ($this->listData as $datum) {
