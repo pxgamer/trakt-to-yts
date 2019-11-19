@@ -3,10 +3,8 @@
 namespace pxgamer\TraktToYts;
 
 use Symfony\Component\Console\Application as BaseApplication;
+use Symfony\Component\Console\Command\Command;
 
-/**
- * Class Application
- */
 class Application extends BaseApplication
 {
     public const NAME = 'Trakt to YTS';
@@ -15,12 +13,12 @@ class Application extends BaseApplication
     /**
      * Application constructor.
      *
-     * @param null $name
-     * @param null $version
+     * @param  null  $name
+     * @param  null  $version
      */
     public function __construct($name = null, $version = null)
     {
-        if (!$version) {
+        if (! $version) {
             $version = static::VERSION === '@'.'git-version@' ?
                 'source' :
                 static::VERSION;
@@ -35,7 +33,7 @@ class Application extends BaseApplication
     }
 
     /**
-     * @return array|\Symfony\Component\Console\Command\Command[]
+     * @return array|Command[]
      */
     protected function getDefaultCommands(): array
     {
