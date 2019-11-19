@@ -1,7 +1,8 @@
 <?php
 
-namespace pxgamer\TraktToYts;
+namespace App\Commands;
 
+use App\Quality;
 use function count;
 use ErrorException;
 use Exception;

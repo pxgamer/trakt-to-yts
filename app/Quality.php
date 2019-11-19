@@ -1,6 +1,6 @@
 <?php
 
-namespace pxgamer\TraktToYts;
+namespace App;
 
 class Quality
 {

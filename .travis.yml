@@ -2,17 +2,8 @@ dist: trusty
 language: php
 
 php:
-  - 7.1
-  - 7.2
-  - nightly
-
-matrix:
-  allow_failures:
-    - php: nightly
-
-# This triggers builds to run on the new TravisCI infrastructure.
-# See: https://docs.travis-ci.com/user/reference/trusty#Container-based-with-sudo%3A-false
-sudo: false
+  - '7.2'
+  - '7.3'
 
 ## Cache composer
 cache:
@@ -41,4 +32,4 @@ deploy:
     on:
         repo: pxgamer/trakt-to-yts
         tags: true
-        php: '7.1'
+        php: '7.2'
