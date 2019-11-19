@@ -6,6 +6,7 @@ use App\Services\YTS\YtsApi;
 use App\Services\Trakt\TraktApi;
 use App\Services\Trakt\TraktMovie;
 use LaravelZero\Framework\Commands\Command;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class DownloadCommand extends Command
 {
@@ -24,9 +25,13 @@ class DownloadCommand extends Command
 
     public function handle(): void
     {
-        $this->retrieveTraktList();
+        try {
+            $this->retrieveTraktList();
 
-        $this->downloadTorrentsFromYts();
+            $this->downloadTorrentsFromYts();
+        } catch (\RuntimeException $exception) {
+            $this->warn($exception->getMessage());
+        }
     }
 
     private function retrieveTraktList(): void
@@ -36,8 +41,12 @@ class DownloadCommand extends Command
 
         $this->traktList = $traktApi->getList($this->argument('trakt-user'), $this->option('list'));
 
-        $this->comment("<options=bold>{$this->option('list')}</> (<options=bold>{$this->argument('trakt-user')}</>): Retrieved successfully");
-        $this->line(null);
+        $this->comment(
+            "<options=bold>{$this->option('list')}</> (<options=bold>{$this->argument('trakt-user')}</>): Retrieved successfully",
+            OutputInterface::VERBOSITY_VERBOSE
+        );
+
+        $this->line('');
     }
 
     private function downloadTorrentsFromYts(): void
@@ -52,12 +61,18 @@ class DownloadCommand extends Command
             }
 
             if (! $ytsListing = $ytsApi->getMovieByImdbId($movie->getImdbId())) {
-                $this->warn("'{$movie->getTitle()} ({$movie->getYear()})': Not found on YTS");
+                $this->warn(
+                    "'{$movie->getTitle()} ({$movie->getYear()})': Not found on YTS",
+                    OutputInterface::VERBOSITY_VERBOSE
+                );
                 continue;
             }
 
             if ($ytsListing->getTorrents()->isEmpty()) {
-                $this->warn("'{$movie->getTitle()} ({$movie->getYear()})': No torrents available");
+                $this->warn(
+                    "'{$movie->getTitle()} ({$movie->getYear()})': No torrents available",
+                    OutputInterface::VERBOSITY_VERBOSE
+                );
                 continue;
             }
         }
