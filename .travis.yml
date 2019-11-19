@@ -14,7 +14,7 @@ before_script:
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
-  - vendor/bin/box compile
+  - ./trakt-to-yts app:build --build-version ${TRAVIS_TAG:-source}
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

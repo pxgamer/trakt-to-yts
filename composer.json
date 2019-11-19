@@ -12,7 +12,6 @@
         "laravel-zero/framework": "^6.0"
     },
     "require-dev": {
-        "humbug/box": "^3.2",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^8.0"
     },

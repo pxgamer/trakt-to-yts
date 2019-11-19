@@ -1,7 +1,4 @@
 {
-    "git-tag": "git-version",
-    "exclude-composer-files": false,
-    "compression": "GZ",
     "directories": [
         "app",
         "bootstrap",
@@ -11,6 +8,8 @@
     "files": [
         "composer.json"
     ],
+    "exclude-composer-files": false,
+    "compression": "GZ",
     "compactors": [
         "KevinGH\\Box\\Compactor\\Json",
         "KevinGH\\Box\\Compactor\\Php",
