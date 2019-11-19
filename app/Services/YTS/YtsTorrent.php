@@ -7,15 +7,15 @@ use stdClass;
 class YtsTorrent
 {
     /** @var string */
-    private $hash;
+    public $hash;
     /** @var string */
-    private $url;
+    public $url;
     /** @var string|null */
-    private $quality;
+    public $quality;
     /** @var string|null */
-    private $type;
+    public $type;
     /** @var string|null */
-    private $size;
+    public $size;
 
     public function __construct(stdClass $metadata)
     {
@@ -25,30 +25,4 @@ class YtsTorrent
         $this->type = $metadata->type ?? null;
         $this->size = $metadata->size ?? null;
     }
-
-    public function getHash(): string
-    {
-        return $this->hash;
-    }
-
-    public function getUrl(): string
-    {
-        return $this->url;
-    }
-
-    public function getQuality(): ?string
-    {
-        return $this->quality;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function getSize(): ?string
-    {
-        return $this->size;
-    }
-
 }

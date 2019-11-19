@@ -2,9 +2,9 @@
 
 namespace App\Services\YTS;
 
-use stdClass;
 use GuzzleHttp\Client;
 use App\Exceptions\InvalidFilter;
+use App\Exceptions\NoMovieDataFound;
 
 class YtsApi
 {
@@ -23,13 +23,29 @@ class YtsApi
         }
 
         $ytsMovieQueryResponse = $this->getGuzzleClient()->get('/api/v2/list_movies.json', [
-            'query_term' => $imdbId,
-            'quality' => $quality,
+            'query' => [
+                'query_term' => $imdbId,
+                'quality' => $quality,
+            ],
         ])->getBody();
 
         $decodedResponse = \GuzzleHttp\json_decode($ytsMovieQueryResponse);
 
-        return new YtsMovie($decodedResponse->movies);
+        if (! ($decodedResponse->data->movies[0] ?? null)) {
+            throw NoMovieDataFound::forImdbIdOnYts($imdbId);
+        }
+
+        return new YtsMovie($decodedResponse->data->movies[0]);
+    }
+
+    public function downloadTorrentTo(YtsTorrent $torrent, ?string $destination = null): bool
+    {
+        return $this->getGuzzleClient()->get($torrent->url, [
+                'headers' => [
+                    'content-type' => 'application/x-bittorrent',
+                ],
+                'sink' => $destination,
+            ])->getStatusCode() === 200;
     }
 
     private function getGuzzleClient(): Client

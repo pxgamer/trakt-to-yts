@@ -8,11 +8,11 @@ use Illuminate\Support\Collection;
 class YtsMovie
 {
     /** @var string */
-    private $title;
+    public $title;
     /** @var int|null */
-    private $year;
+    public $year;
     /** @var Collection<YtsTorrent> */
-    private $torrents;
+    public $torrents;
 
     public function __construct(stdClass $metadata)
     {
@@ -23,25 +23,7 @@ class YtsMovie
 
         /** @var stdClass $torrent */
         foreach ($metadata->torrents ?? [] as $torrent) {
-            $ytsTorrent = new YtsTorrent($torrent);
-
-            $this->torrents->put($ytsTorrent->getQuality(), $ytsTorrent);
+            $this->torrents->push(new YtsTorrent($torrent));
         }
-    }
-
-    public function getTitle(): string
-    {
-        return $this->title;
-    }
-
-    public function getYear(): ?int
-    {
-        return $this->year;
-    }
-
-    /** @return Collection<YtsTorrent> */
-    public function getTorrents(): Collection
-    {
-        return $this->torrents;
     }
 }

@@ -4,8 +4,11 @@ namespace App\Commands;
 
 use App\Services\YTS\YtsApi;
 use App\Services\Trakt\TraktApi;
+use App\Services\YTS\YtsTorrent;
 use App\Services\Trakt\TraktMovie;
+use Illuminate\Support\Facades\Storage;
 use LaravelZero\Framework\Commands\Command;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class DownloadCommand extends Command
@@ -36,6 +39,7 @@ class DownloadCommand extends Command
             }
         } catch (\RuntimeException $exception) {
             $this->warn($exception->getMessage());
+            return;
         }
     }
 
@@ -63,25 +67,41 @@ class DownloadCommand extends Command
 
         /** @var TraktMovie $movie */
         foreach ($this->traktList as $movie) {
-            if (! $movie->getImdbId()) {
+            if (! $movie->imdbId) {
                 continue;
             }
 
-            if (! $ytsListing = $ytsApi->getMovieByImdbId($movie->getImdbId())) {
+            if (! $ytsListing = $ytsApi->getMovieByImdbId($movie->imdbId, $this->option('quality'))) {
                 $this->warn(
-                    "'{$movie->getTitle()} ({$movie->getYear()})': Not found on YTS",
+                    "'{$movie->title} ({$movie->year})': Not found on YTS",
                     OutputInterface::VERBOSITY_VERBOSE
                 );
+
                 continue;
             }
 
-            if ($ytsListing->getTorrents()->isEmpty()) {
+            if ($ytsListing->torrents->isEmpty()) {
                 $this->warn(
-                    "'{$movie->getTitle()} ({$movie->getYear()})': No torrents available",
+                    "'{$movie->title} ({$movie->year})': No torrents available",
                     OutputInterface::VERBOSITY_VERBOSE
                 );
+
                 continue;
             }
+
+            /** @var YtsTorrent $matchedTorrent */
+            $matchedTorrent = $ytsListing->torrents->firstWhere('quality', '=', $this->option('quality'));
+
+            if (! $matchedTorrent) {
+                $this->warn(
+                    "'{$movie->title} ({$movie->year})': No torrent available in '{$this->option('quality')}' quality",
+                    OutputInterface::VERBOSITY_VERBOSE
+                );
+
+                continue;
+            }
+
+            $ytsApi->downloadTorrentTo($matchedTorrent, "{$this->option('output')}/{$movie->title}.{$movie->year}.{$matchedTorrent->quality}.{$matchedTorrent->type}.torrent");
         }
     }
 }
