@@ -15,7 +15,8 @@ class DownloadCommand extends Command
                                      { --l|list=watchlist : A custom list id or stub }
                                      { --o|output=./torrents : The directory to output data to }
                                      { --quality= : The quality to download (720p, 1080p or 3D) }
-                                     { --statistics : Display download statistics }';
+                                     { --statistics : Display download statistics }
+                                     { --y|force : Do not prompt about downloading torrents }';
 
     /** {@inheritdoc} */
     protected $description = 'Download the contents of a Trakt list from YTS';
@@ -28,7 +29,11 @@ class DownloadCommand extends Command
         try {
             $this->retrieveTraktList();
 
-            $this->downloadTorrentsFromYts();
+            $this->comment('This list contains '.count($this->traktList).' movies');
+
+            if ($this->option('force') || $this->confirm('Are you sure you would like to download them')) {
+                $this->downloadTorrentsFromYts();
+            }
         } catch (\RuntimeException $exception) {
             $this->warn($exception->getMessage());
         }
@@ -53,6 +58,8 @@ class DownloadCommand extends Command
     {
         /** @var YtsApi $ytsApi */
         $ytsApi = app(YtsApi::class);
+
+        $this->line('');
 
         /** @var TraktMovie $movie */
         foreach ($this->traktList as $movie) {
