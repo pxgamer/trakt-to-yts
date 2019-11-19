@@ -7,7 +7,7 @@
         "trakt-to-yts"
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^7.3",
         "guzzlehttp/guzzle": "^6.3",
         "laravel-zero/framework": "^6.0"
     },

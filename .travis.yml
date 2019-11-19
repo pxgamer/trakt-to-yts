@@ -2,7 +2,6 @@ dist: trusty
 language: php
 
 php:
-  - '7.2'
   - '7.3'
 
 ## Cache composer
@@ -20,16 +19,13 @@ script:
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
-before_deploy:
-- mv bin/trakt-to-yts.phar bin/trakt-to-yts-${TRAVIS_TAG}.phar
-
 deploy:
     provider: releases
     api_key:
-        secure: $GITHUB_DEPLOY_KEY
-    file: bin/trakt-to-yts-${TRAVIS_TAG}.phar
+        secure: ${GITHUB_DEPLOY_KEY}
+    file: builds/trakt-to-yts.phar
     skip_cleanup: true
     on:
         repo: pxgamer/trakt-to-yts
         tags: true
-        php: '7.2'
+        php: '7.3'
