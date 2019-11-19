@@ -6,9 +6,7 @@ use App\Services\YTS\YtsApi;
 use App\Services\Trakt\TraktApi;
 use App\Services\YTS\YtsTorrent;
 use App\Services\Trakt\TraktMovie;
-use Illuminate\Support\Facades\Storage;
 use LaravelZero\Framework\Commands\Command;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class DownloadCommand extends Command
@@ -52,7 +50,7 @@ class DownloadCommand extends Command
 
         $this->comment(
             "<options=bold>{$this->option('list')}</> (<options=bold>{$this->argument('trakt-user')}</>): Retrieved successfully",
-            OutputInterface::VERBOSITY_VERBOSE
+            OutputInterface::VERBOSITY_VERY_VERBOSE
         );
 
         $this->line('');
@@ -74,7 +72,7 @@ class DownloadCommand extends Command
             if (! $ytsListing = $ytsApi->getMovieByImdbId($movie->imdbId, $this->option('quality'))) {
                 $this->warn(
                     "'{$movie->title} ({$movie->year})': Not found on YTS",
-                    OutputInterface::VERBOSITY_VERBOSE
+                    OutputInterface::VERBOSITY_VERY_VERBOSE
                 );
 
                 continue;
@@ -83,7 +81,7 @@ class DownloadCommand extends Command
             if ($ytsListing->torrents->isEmpty()) {
                 $this->warn(
                     "'{$movie->title} ({$movie->year})': No torrents available",
-                    OutputInterface::VERBOSITY_VERBOSE
+                    OutputInterface::VERBOSITY_VERY_VERBOSE
                 );
 
                 continue;
@@ -95,13 +93,21 @@ class DownloadCommand extends Command
             if (! $matchedTorrent) {
                 $this->warn(
                     "'{$movie->title} ({$movie->year})': No torrent available in '{$this->option('quality')}' quality",
-                    OutputInterface::VERBOSITY_VERBOSE
+                    OutputInterface::VERBOSITY_VERY_VERBOSE
                 );
 
                 continue;
             }
 
-            $ytsApi->downloadTorrentTo($matchedTorrent, "{$this->option('output')}/{$movie->title}.{$movie->year}.{$matchedTorrent->quality}.{$matchedTorrent->type}.torrent");
+            if ($ytsApi->downloadTorrentTo(
+                $matchedTorrent,
+                "{$this->option('output')}/{$movie->title} ({$movie->year}) {$matchedTorrent->quality}.torrent"
+            )) {
+                $this->comment(
+                    "'<options=bold>{$movie->title} ({$movie->year})</>': Successfully downloaded at '<options=bold>{$matchedTorrent->quality}</>'",
+                    OutputInterface::VERBOSITY_VERBOSE
+                );
+            }
         }
     }
 }
