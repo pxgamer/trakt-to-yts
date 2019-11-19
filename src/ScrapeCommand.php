@@ -2,23 +2,23 @@
 
 namespace pxgamer\TraktToYts;
 
+use function count;
+use ErrorException;
+use Exception;
 use GuzzleHttp\Client;
+use function GuzzleHttp\json_decode;
+use function in_array;
+use function is_dir;
+use function mkdir;
+use RuntimeException;
+use function sprintf;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use function count;
-use function GuzzleHttp\json_decode;
-use function in_array;
-use function is_dir;
-use function mkdir;
-use function sprintf;
 
-/**
- * Class RunCommand
- */
 class ScrapeCommand extends Command
 {
     public const ALLOWED_QUALITIES = [
@@ -33,76 +33,40 @@ class ScrapeCommand extends Command
     public const TRAKT_MAIN_URI = 'https://trakt.tv';
     public const YTS_API_URI = 'https://yts.am/api/v2';
 
-    /**
-     * A Trakt API key
-     *
-     * @var string|null
-     */
+    /** @var string|null A Trakt API key */
     private $apiKey;
-    /**
-     * The Guzzle client
-     *
-     * @var Client
-     */
+
+    /** @var Client The Guzzle client */
     private $guzzle;
-    /**
-     * The Input interface
-     *
-     * @var InputInterface
-     */
+
+    /** @var InputInterface The Input interface */
     private $input;
-    /**
-     * The list id or slug
-     *
-     * @var string
-     */
+
+    /** @var string The list id or slug */
     private $list;
-    /**
-     * The list data from Trakt
-     *
-     * @var array
-     */
+
+    /** @var array The list data from Trakt */
     private $listData;
-    /**
-     * The Output interface
-     *
-     * @var OutputInterface
-     */
+
+    /** @var OutputInterface The Output interface */
     private $output;
-    /**
-     * The directory to download torrent files to
-     *
-     * @var string|null
-     */
+
+    /** @var string|null The directory to download torrent files to */
     private $outputDirectory = 'torrents';
-    /**
-     * The quality to download from YTS
-     *
-     * @var string|null
-     */
+
+    /** @var string|null The quality to download from YTS */
     private $quality;
-    /**
-     * Recorded statistics for the app
-     *
-     * @var array
-     */
+
+    /** @var array Recorded statistics for the app */
     private $statistics = [
         self::STATUS_DOWNLOADED => 0,
-        self::STATUS_FAILED     => 0,
+        self::STATUS_FAILED => 0,
         self::STATUS_NO_RELEASE => 0,
     ];
-    /**
-     * A Trakt username
-     *
-     * @var string
-     */
+
+    /** @var string A Trakt username */
     private $traktUser;
 
-    /**
-     * Configure the command options.
-     *
-     * @return void
-     */
     protected function configure(): void
     {
         $this
@@ -150,10 +114,10 @@ class ScrapeCommand extends Command
     /**
      * Execute the command.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface   $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface $output
+     * @param  InputInterface  $input
+     * @param  OutputInterface  $output
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
@@ -180,30 +144,30 @@ class ScrapeCommand extends Command
     }
 
     /**
-     * @param InputInterface $input
-     * @throws \ErrorException
+     * @param  InputInterface  $input
+     * @throws ErrorException
      */
     private function parseInput(InputInterface $input): void
     {
         $this->apiKey = $input->getOption('key') ?? getenv('TRAKT_API_KEY');
 
-        if (!$this->apiKey) {
-            throw new \ErrorException('Unspecified API key.');
+        if (! $this->apiKey) {
+            throw new ErrorException('Unspecified API key.');
         }
 
         $this->traktUser = $input->getArgument('trakt-user');
         $this->outputDirectory = $input->getOption('output');
         $this->quality = $input->getOption('quality');
 
-        if (!in_array($this->quality, self::ALLOWED_QUALITIES, true)) {
-            throw new \ErrorException('Invalid quality specified.');
+        if (! in_array($this->quality, self::ALLOWED_QUALITIES, true)) {
+            throw new ErrorException('Invalid quality specified.');
         }
 
         $this->list = $input->getOption('list');
     }
 
     /**
-     * @throws \ErrorException
+     * @throws ErrorException
      */
     private function getListData(): void
     {
@@ -216,19 +180,19 @@ class ScrapeCommand extends Command
             [
                 'headers' => [
                     'trakt-api-version' => 2,
-                    'trakt-api-key'     => $this->apiKey,
+                    'trakt-api-key' => $this->apiKey,
                 ],
             ]
         );
 
         if (empty($this->listData)) {
-            throw new \ErrorException('No movies were found in this list.');
+            throw new ErrorException('No movies were found in this list.');
         }
     }
 
     /**
-     * @param string     $url
-     * @param array|null $options
+     * @param  string  $url
+     * @param  array|null  $options
      * @return array
      */
     private function getJson(string $url, array $options = null): array
@@ -246,7 +210,7 @@ class ScrapeCommand extends Command
     }
 
     /**
-     * @param string $question
+     * @param  string  $question
      * @return bool
      */
     private function askConfirmation(string $question): bool
@@ -261,20 +225,17 @@ class ScrapeCommand extends Command
             ->ask($this->input, $this->output, $questionHelper);
     }
 
-    /**
-     * Download the torrent files from YTS
-     */
     private function downloadTorrents(): void
     {
-        if (!is_dir($this->outputDirectory) &&
-            !mkdir($concurrentDirectory = $this->outputDirectory) &&
-            !is_dir($concurrentDirectory)
+        if (! is_dir($this->outputDirectory) &&
+            ! mkdir($concurrentDirectory = $this->outputDirectory) &&
+            ! is_dir($concurrentDirectory)
         ) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
 
         foreach ($this->listData as $datum) {
-            if (!$datum['movie']['ids']['imdb']) {
+            if (! $datum['movie']['ids']['imdb']) {
                 continue;
             }
 
@@ -296,7 +257,7 @@ class ScrapeCommand extends Command
                         $outputFile = $this->outputDirectory.DIRECTORY_SEPARATOR.
                             $current['title_long'].' '.$torrent['quality'].'.torrent';
 
-                        if (!$this->getTorrentFile($torrent['url'], $outputFile)) {
+                        if (! $this->getTorrentFile($torrent['url'], $outputFile)) {
                             $this->output->writeln(
                                 '<error>Failed to download:</error> '.$current['title_long']
                             );
@@ -317,11 +278,6 @@ class ScrapeCommand extends Command
         }
     }
 
-    /**
-     * @param string $url
-     * @param string $downloadPath
-     * @return bool
-     */
     private function getTorrentFile(string $url, string $downloadPath): bool
     {
         if ($this->guzzle === null) {
@@ -335,9 +291,6 @@ class ScrapeCommand extends Command
                 ->getStatusCode() === 200;
     }
 
-    /**
-     * Display statistics information.
-     */
     private function statistics(): void
     {
         if ($this->input->getOption('statistics')) {
