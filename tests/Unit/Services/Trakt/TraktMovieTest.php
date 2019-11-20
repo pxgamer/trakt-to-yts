@@ -20,8 +20,8 @@ class TraktMovieTest extends TestCase
 
         $traktMovie = new TraktMovie($metadata);
 
-        $this->assertEquals('Star Wars', $traktMovie->getTitle());
-        $this->assertEquals(1977, $traktMovie->getYear());
-        $this->assertEquals('tt0076759', $traktMovie->getImdbId());
+        $this->assertEquals('Star Wars', $traktMovie->title);
+        $this->assertEquals(1977, $traktMovie->year);
+        $this->assertEquals('tt0076759', $traktMovie->imdbId);
     }
 }

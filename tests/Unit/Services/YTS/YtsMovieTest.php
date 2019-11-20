@@ -27,8 +27,8 @@ class YtsMovieTest extends TestCase
 
         $subject = new YtsMovie($metadata);
 
-        $this->assertEquals('Star Wars', $subject->getTitle());
-        $this->assertEquals(1977, $subject->getYear());
-        $this->assertContainsOnlyInstancesOf(YtsTorrent::class, $subject->getTorrents());
+        $this->assertEquals('Star Wars', $subject->title);
+        $this->assertEquals(1977, $subject->year);
+        $this->assertContainsOnlyInstancesOf(YtsTorrent::class, $subject->torrents);
     }
 }
