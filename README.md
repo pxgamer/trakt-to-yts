@@ -26,7 +26,7 @@ phive install pxgamer/trakt-to-yts
 ## Usage
 
 - Get an API key from [Trakt][trakt-api]
-- Either set the `TRAKT_API_KEY` environment variable, or provide a `--key {key}` option in the command
+- Either set the `TRAKT_CLIENT_ID` environment variable, or provide a `--key {key}` option in the command
 - Run the binary using `trakt-to-yts [options]`
 
 ## Change log
@@ -58,26 +58,41 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 
 ## Treeware
 
-You're free to use this package, but if it makes it to your production environment you are required to buy the world a tree.
+You're free to use this package, but if it makes it to your production environment you are required to buy the world a
+tree.
 
-It’s now common knowledge that one of the best tools to tackle the climate crisis and keep our temperatures from rising above 1.5C is to plant trees. If you support this package and contribute to the Treeware forest you’ll be creating employment for local families and restoring wildlife habitats.
+It’s now common knowledge that one of the best tools to tackle the climate crisis and keep our temperatures from rising
+above 1.5C is to plant trees. If you support this package and contribute to the Treeware forest you’ll be creating
+employment for local families and restoring wildlife habitats.
 
 You can buy trees [here][link-treeware-gifting].
 
 Read more about Treeware at [treeware.earth][link-treeware].
 
 [ico-version]: https://img.shields.io/packagist/v/pxgamer/trakt-to-yts.svg?style=flat-square
+
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
+
 [ico-github-actions]: https://img.shields.io/github/workflow/status/pxgamer/trakt-to-yts/Tests.svg?style=flat-square
+
 [ico-static-analysis]: https://img.shields.io/github/workflow/status/pxgamer/trakt-to-yts/Static%20Analysis.svg?style=flat-square&label=Static%20Analysis
+
 [ico-downloads]: https://img.shields.io/packagist/dt/pxgamer/trakt-to-yts.svg?style=flat-square
+
 [ico-treeware-gifting]: https://img.shields.io/badge/Treeware-%F0%9F%8C%B3-lightgreen?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/pxgamer/trakt-to-yts
+
 [link-github-actions]: https://github.com/pxgamer/trakt-to-yts/actions
+
 [link-static-analysis]: https://github.com/pxgamer/trakt-to-yts/actions/workflows/static.yml
+
 [link-downloads]: https://packagist.org/packages/pxgamer/trakt-to-yts
+
 [link-treeware]: https://treeware.earth
+
 [link-treeware-gifting]: https://ecologi.com/owenvoke?gift-trees
+
 [link-author]: https://github.com/owenvoke
+
 [link-contributors]: ../../contributors

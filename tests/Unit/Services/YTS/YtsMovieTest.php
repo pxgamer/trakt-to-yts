@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use App\Services\YTS\YtsMovie;
-use App\Services\YTS\YtsTorrent;
+use App\Services\YTS\ValueObjects\Movie;
+use App\Services\YTS\ValueObjects\Torrent;
 
 it('can populate a YTS movie from the metadata object', function () {
-    $metadata = (object) [
+    $metadata = [
         'title' => 'Star Wars',
         'year' => 1977,
-        'torrents' => (object) [
-            (object) [
+        'torrents' => [
+            [
                 'hash' => '5398E1142A3710D683C88404D57B6966990A4535',
                 'url' => 'https://yts.lt/torrent/download/5398E1142A3710D683C88404D57B6966990A4535.torrent',
                 'quality' => '1080p',
@@ -20,9 +20,9 @@ it('can populate a YTS movie from the metadata object', function () {
         ],
     ];
 
-    $subject = new YtsMovie($metadata);
+    $subject = Movie::fromResponse($metadata);
 
     $this->assertEquals('Star Wars', $subject->title);
     $this->assertEquals(1977, $subject->year);
-    $this->assertContainsOnlyInstancesOf(YtsTorrent::class, $subject->torrents);
+    $this->assertContainsOnlyInstancesOf(Torrent::class, $subject->torrents);
 });
