@@ -19,7 +19,6 @@ class DownloadCommand extends Command
                                      { --l|list=watchlist : A custom list id or stub }
                                      { --o|output=./torrents : The directory to output data to }
                                      { --quality=1080p : The quality to download (720p, 1080p or 3D) }
-                                     { --statistics : Display download statistics }
                                      { --y|force : Do not prompt about downloading torrents }';
 
     /** {@inheritdoc} */
