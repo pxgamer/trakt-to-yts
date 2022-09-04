@@ -21,11 +21,8 @@ jobs:
           tools: composer
           coverage: none
 
-      - name: Install PHP dependencies
-        uses: ramsey/composer-install@v1
-        with:
-          dependency-versions: highest
-          composer-options: "--prefer-dist"
+      - name: Install Pint
+        run: composer global require laravel/pint --no-interaction --ansi
 
       - name: Run Pint
-        run: vendor/bin/pint --test --ansi
+        run: pint --test --ansi

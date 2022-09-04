@@ -17,12 +17,6 @@ Via Composer
 composer require pxgamer/trakt-to-yts
 ```
 
-Via Phive
-
-```shell
-phive install pxgamer/trakt-to-yts
-```
-
 ## Usage
 
 - Get an API key from [Trakt][link-trakt-api]
