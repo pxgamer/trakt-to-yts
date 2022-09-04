@@ -20,10 +20,10 @@ class Client
      * @param  Quality|null  $quality
      * @return Movie
      */
-    public function getMovieByImdbId(string $imdbId, Quality|null $quality = null): Movie
+    public function getMovieByImdbId(string|null $imdbId, Quality|null $quality = null): Movie
     {
         $response = Http::baseUrl(self::BASE_URI)->get('/api/v2/list_movies.json', [
-            'query_term' => $imdbId->value ?? $imdbId,
+            'query_term' => $imdbId,
             'quality' => $quality,
         ])->json();
 
@@ -31,7 +31,9 @@ class Client
             throw NoMovieDataFound::forImdbIdOnYts($imdbId);
         }
 
-        return Movie::fromResponse($response->data->movies[0]);
+        return Movie::fromResponse(
+            Arr::get($response, 'data.movies.0')
+        );
     }
 
     public function downloadTorrentTo(Torrent $torrent, ?string $destination = null): bool
