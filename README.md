@@ -25,8 +25,8 @@ phive install pxgamer/trakt-to-yts
 
 ## Usage
 
-- Get an API key from [Trakt][trakt-api]
-- Either set the `TRAKT_CLIENT_ID` environment variable, or provide a `--key {key}` option in the command
+- Get an API key from [Trakt][link-trakt-api]
+- Either set the `TRAKT_CLIENT_ID` environment variable
 - Run the binary using `trakt-to-yts [options]`
 
 ## Change log
@@ -70,29 +70,18 @@ You can buy trees [here][link-treeware-gifting].
 Read more about Treeware at [treeware.earth][link-treeware].
 
 [ico-version]: https://img.shields.io/packagist/v/pxgamer/trakt-to-yts.svg?style=flat-square
-
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-
 [ico-github-actions]: https://img.shields.io/github/workflow/status/pxgamer/trakt-to-yts/Tests.svg?style=flat-square
-
 [ico-static-analysis]: https://img.shields.io/github/workflow/status/pxgamer/trakt-to-yts/Static%20Analysis.svg?style=flat-square&label=Static%20Analysis
-
 [ico-downloads]: https://img.shields.io/packagist/dt/pxgamer/trakt-to-yts.svg?style=flat-square
-
 [ico-treeware-gifting]: https://img.shields.io/badge/Treeware-%F0%9F%8C%B3-lightgreen?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/pxgamer/trakt-to-yts
-
 [link-github-actions]: https://github.com/pxgamer/trakt-to-yts/actions
-
 [link-static-analysis]: https://github.com/pxgamer/trakt-to-yts/actions/workflows/static.yml
-
 [link-downloads]: https://packagist.org/packages/pxgamer/trakt-to-yts
-
+[link-trakt-api]: https://trakt.tv/oauth/applications
 [link-treeware]: https://treeware.earth
-
 [link-treeware-gifting]: https://ecologi.com/owenvoke?gift-trees
-
 [link-author]: https://github.com/owenvoke
-
 [link-contributors]: ../../contributors
