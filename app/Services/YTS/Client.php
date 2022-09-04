@@ -41,6 +41,6 @@ class Client
         ])
             ->sink($destination)
             ->get($torrent->url)
-            ->isOk();
+            ->ok();
     }
 }
