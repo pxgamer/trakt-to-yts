@@ -30,10 +30,10 @@ class Client
             "/users/{$username}/watchlist/movies" :
             "/users/{$username}/lists/{$listId}/items/movies";
 
-        $response = Http::withHeaders([
+        $response = Http::baseUrl(self::BASE_URI)->withHeaders([
             'trakt-api-version' => self::API_VERSION,
             'trakt-api-key' => $this->apiKey,
-        ])->get(self::BASE_URI.$listUrl)->json();
+        ])->get($listUrl)->json();
 
         return collect($response)
             ->map(fn (array $listing): Movie => Movie::fromListing($listing));

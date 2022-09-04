@@ -22,7 +22,7 @@ class Client
      */
     public function getMovieByImdbId(string $imdbId, Quality|null $quality = null): Movie
     {
-        $response = Http::get(self::BASE_URI.'/api/v2/list_movies.json', [
+        $response = Http::baseUrl(self::BASE_URI)->get('/api/v2/list_movies.json', [
             'query_term' => $imdbId->value ?? $imdbId,
             'quality' => $quality,
         ])->json();
