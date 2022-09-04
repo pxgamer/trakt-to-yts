@@ -20,8 +20,8 @@ composer require pxgamer/trakt-to-yts
 ## Usage
 
 - Get an API key from [Trakt][link-trakt-api]
-- Either set the `TRAKT_API_TOKEN` environment variable
-- Run the binary using `trakt-to-yts [options]`
+- Set the `TRAKT_API_TOKEN` environment variable for your Terminal
+- Run `trakt-to-yts` to view available commands
 
 ## Change log
 
@@ -39,7 +39,7 @@ Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
 ## Security
 
-If you discover any security related issues, please email owzie123@gmail.com instead of using the issue tracker.
+If you discover any security related issues, please email security@voke.dev instead of using the issue tracker.
 
 ## Credits
 
