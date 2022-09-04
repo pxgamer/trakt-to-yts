@@ -8,6 +8,7 @@ use App\Services\YTS\Client as YTSClient;
 use App\Services\YTS\Enums\Quality;
 use App\Services\YTS\ValueObjects\Torrent;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 use LaravelZero\Framework\Commands\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -100,7 +101,9 @@ class DownloadCommand extends Command
             }
 
             /** @var Torrent $matchedTorrent */
-            $matchedTorrent = $ytsListing->torrents->firstWhere('quality', '=', $this->quality?->value);
+            $matchedTorrent = $ytsListing->torrents
+                ->filter(fn (Torrent $torrent) => $torrent->quality instanceof $this->quality)
+                ->first();
 
             if (! $matchedTorrent) {
                 $this->components->warn(
@@ -111,12 +114,16 @@ class DownloadCommand extends Command
                 continue;
             }
 
+            $outputDirectory = $this->option('output');
+
+            File::ensureDirectoryExists($outputDirectory);
+
             if ($ytsApi->downloadTorrentTo(
                 $matchedTorrent,
-                "{$this->option('output')}/{$movie->title} ({$movie->year}) {$matchedTorrent->quality}.torrent"
+                "{$outputDirectory}/{$movie->title} ({$movie->year}) {$matchedTorrent->quality?->value}.torrent"
             )) {
                 $this->components->info(
-                    "'<options=bold>{$movie->title} ({$movie->year})</>': Successfully downloaded at '<options=bold>{$matchedTorrent->quality}</>'",
+                    "'<options=bold>{$movie->title} ({$movie->year})</>': Successfully downloaded at '<options=bold>{$matchedTorrent->quality?->value}</>'",
                     OutputInterface::VERBOSITY_VERBOSE
                 );
             }
