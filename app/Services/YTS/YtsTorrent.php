@@ -8,12 +8,16 @@ class YtsTorrent
 {
     /** @var string */
     public $hash;
+
     /** @var string */
     public $url;
+
     /** @var string|null */
     public $quality;
+
     /** @var string|null */
     public $type;
+
     /** @var string|null */
     public $size;
 

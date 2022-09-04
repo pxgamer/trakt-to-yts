@@ -2,13 +2,14 @@
 
 namespace App\Services\YTS;
 
-use GuzzleHttp\Client;
 use App\Exceptions\InvalidFilter;
 use App\Exceptions\NoMovieDataFound;
+use GuzzleHttp\Client;
 
 class YtsApi
 {
     public const SERVICE_ID = 'YTS';
+
     public const BASE_URI = 'https://yts.lt';
 
     /**
@@ -41,11 +42,11 @@ class YtsApi
     public function downloadTorrentTo(YtsTorrent $torrent, ?string $destination = null): bool
     {
         return $this->getGuzzleClient()->get($torrent->url, [
-                'headers' => [
-                    'content-type' => 'application/x-bittorrent',
-                ],
-                'sink' => $destination,
-            ])->getStatusCode() === 200;
+            'headers' => [
+                'content-type' => 'application/x-bittorrent',
+            ],
+            'sink' => $destination,
+        ])->getStatusCode() === 200;
     }
 
     private function getGuzzleClient(): Client

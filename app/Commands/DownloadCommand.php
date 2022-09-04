@@ -2,10 +2,10 @@
 
 namespace App\Commands;
 
-use App\Services\YTS\YtsApi;
 use App\Services\Trakt\TraktApi;
-use App\Services\YTS\YtsTorrent;
 use App\Services\Trakt\TraktMovie;
+use App\Services\YTS\YtsApi;
+use App\Services\YTS\YtsTorrent;
 use LaravelZero\Framework\Commands\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -37,6 +37,7 @@ class DownloadCommand extends Command
             }
         } catch (\RuntimeException $exception) {
             $this->warn($exception->getMessage());
+
             return;
         }
     }

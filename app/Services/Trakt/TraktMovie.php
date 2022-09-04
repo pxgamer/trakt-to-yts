@@ -8,8 +8,10 @@ class TraktMovie
 {
     /** @var string */
     public $title;
+
     /** @var int|null */
     public $year;
+
     /** @var string|null */
     public $imdbId;
 

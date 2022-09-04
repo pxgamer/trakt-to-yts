@@ -2,15 +2,17 @@
 
 namespace App\Services\YTS;
 
-use stdClass;
 use Illuminate\Support\Collection;
+use stdClass;
 
 class YtsMovie
 {
     /** @var string */
     public $title;
+
     /** @var int|null */
     public $year;
+
     /** @var Collection<YtsTorrent> */
     public $torrents;
 

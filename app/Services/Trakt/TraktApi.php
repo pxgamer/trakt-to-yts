@@ -2,12 +2,13 @@
 
 namespace App\Services\Trakt;
 
-use stdClass;
 use GuzzleHttp\Client;
+use stdClass;
 
 class TraktApi
 {
     public const SERVICE_ID = 'Trakt';
+
     public const BASE_URI = 'https://api.trakt.tv';
 
     /** @var string */
