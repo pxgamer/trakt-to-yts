@@ -12,7 +12,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(Client::class, function (): Client {
-            if (! $traktApiKey = $this->app->get(Repository::class)->get('services.trakt.client_id')) {
+            if (! $traktApiKey = $this->app->get(Repository::class)->get('services.trakt.token')) {
                 throw ApiKeyNotSpecified::forServiceWithId(Client::SERVICE_ID);
             }
 

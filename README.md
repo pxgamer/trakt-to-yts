@@ -26,7 +26,7 @@ phive install pxgamer/trakt-to-yts
 ## Usage
 
 - Get an API key from [Trakt][link-trakt-api]
-- Either set the `TRAKT_CLIENT_ID` environment variable
+- Either set the `TRAKT_API_TOKEN` environment variable
 - Run the binary using `trakt-to-yts [options]`
 
 ## Change log
