@@ -3,15 +3,16 @@
     "type": "library",
     "description": "A CLI for downloading Trakt lists from YTS",
     "license": "MIT",
-    "bin": "trakt-to-yts",
     "require": {
         "php": "^8.1",
         "guzzlehttp/guzzle": "^7.5",
-        "laravel-zero/framework": "^9.1"
+        "laravel-zero/framework": "^9.1.3",
+        "nunomaduro/termwind": "^1.13"
     },
     "require-dev": {
+        "laravel/pint": "^1.0",
         "mockery/mockery": "^1.5",
-        "pestphp/pest": "^1.22"
+        "pestphp/pest": "^1.21.3"
     },
     "autoload": {
         "psr-4": {
@@ -24,7 +25,7 @@
         }
     },
     "scripts": {
-        "test:unit": "pest --ansi",
+        "test:unit": "pest --colors=always",
         "test": [
             "@test:unit"
         ]
@@ -36,5 +37,6 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true
         }
-    }
+    },
+    "bin": "trakt-to-yts"
 }
