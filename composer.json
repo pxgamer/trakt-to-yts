@@ -1,36 +1,40 @@
 {
     "name": "pxgamer/trakt-to-yts",
     "type": "library",
-    "description": "A CLI for downloading Trakt lists from YTS.",
+    "description": "A CLI for downloading Trakt lists from YTS",
     "license": "MIT",
-    "bin": [
-        "trakt-to-yts"
-    ],
+    "bin": "trakt-to-yts",
     "require": {
-        "php": "^7.3",
-        "guzzlehttp/guzzle": "^6.3",
-        "laravel-zero/framework": "^6.0"
+        "php": "^8.1",
+        "guzzlehttp/guzzle": "^7.5",
+        "laravel-zero/framework": "^9.1"
     },
     "require-dev": {
-        "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^8.0"
+        "mockery/mockery": "^1.5",
+        "pestphp/pest": "^1.22"
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app"
+            "App\\": "app/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests"
+            "Tests\\": "tests/"
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test:unit": "pest --ansi",
+        "test": [
+            "@test:unit"
+        ]
     },
     "config": {
         "preferred-install": "dist",
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }
