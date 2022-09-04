@@ -1,26 +1,26 @@
-# trakt-to-yts
+# Trakt to YTS
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
-[![Build Status][ico-travis]][link-travis]
-[![Style CI][ico-styleci]][link-styleci]
-[![Code Coverage][ico-code-quality]][link-code-quality]
+[![Build Status][ico-github-actions]][link-github-actions]
+[![Static Analysis][ico-static-analysis]][link-static-analysis]
 [![Total Downloads][ico-downloads]][link-downloads]
+[![Buy us a tree][ico-treeware-gifting]][link-treeware-gifting]
 
-A CLI for downloading Trakt lists from YTS.
+A CLI for downloading Trakt lists from YTS
 
 ## Install
 
 Via Composer
 
-```bash
-$ composer require pxgamer/trakt-to-yts
+```shell
+composer require pxgamer/trakt-to-yts
 ```
 
 Via Phive
 
-```bash
-$ phive install pxgamer/trakt-to-yts
+```shell
+phive install pxgamer/trakt-to-yts
 ```
 
 ## Usage
@@ -35,13 +35,13 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 ## Testing
 
-``` bash
-$ composer test
+``` shell
+composer test
 ```
 
 ## Contributing
 
-Please see [CONTRIBUTING](.github/CONTRIBUTING.md) and [CODE_OF_CONDUCT](.github/CODE_OF_CONDUCT.md) for details.
+Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
 ## Security
 
@@ -49,26 +49,35 @@ If you discover any security related issues, please email owzie123@gmail.com ins
 
 ## Credits
 
-- [pxgamer][link-author]
+- [Owen Voke][link-author]
 - [All Contributors][link-contributors]
 
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
-[trakt-api]: https://trakt.tv/oauth/applications
+## Treeware
+
+You're free to use this package, but if it makes it to your production environment you are required to buy the world a tree.
+
+It’s now common knowledge that one of the best tools to tackle the climate crisis and keep our temperatures from rising above 1.5C is to plant trees. If you support this package and contribute to the Treeware forest you’ll be creating employment for local families and restoring wildlife habitats.
+
+You can buy trees [here][link-treeware-gifting].
+
+Read more about Treeware at [treeware.earth][link-treeware].
 
 [ico-version]: https://img.shields.io/packagist/v/pxgamer/trakt-to-yts.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/pxgamer/trakt-to-yts/master.svg?style=flat-square
-[ico-styleci]: https://styleci.io/repos/129815869/shield
-[ico-code-quality]: https://img.shields.io/codecov/c/github/pxgamer/trakt-to-yts.svg?style=flat-square
+[ico-github-actions]: https://img.shields.io/github/workflow/status/pxgamer/trakt-to-yts/Tests.svg?style=flat-square
+[ico-static-analysis]: https://img.shields.io/github/workflow/status/pxgamer/trakt-to-yts/Static%20Analysis.svg?style=flat-square&label=Static%20Analysis
 [ico-downloads]: https://img.shields.io/packagist/dt/pxgamer/trakt-to-yts.svg?style=flat-square
+[ico-treeware-gifting]: https://img.shields.io/badge/Treeware-%F0%9F%8C%B3-lightgreen?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/pxgamer/trakt-to-yts
-[link-travis]: https://travis-ci.org/pxgamer/trakt-to-yts
-[link-styleci]: https://styleci.io/repos/129815869
-[link-code-quality]: https://codecov.io/gh/pxgamer/trakt-to-yts
+[link-github-actions]: https://github.com/pxgamer/trakt-to-yts/actions
+[link-static-analysis]: https://github.com/pxgamer/trakt-to-yts/actions/workflows/static.yml
 [link-downloads]: https://packagist.org/packages/pxgamer/trakt-to-yts
-[link-author]: https://github.com/pxgamer
+[link-treeware]: https://treeware.earth
+[link-treeware-gifting]: https://ecologi.com/owenvoke?gift-trees
+[link-author]: https://github.com/owenvoke
 [link-contributors]: ../../contributors
