@@ -71,7 +71,7 @@ class DownloadCommand extends Command
         return $this;
     }
 
-    private function downloadTorrentsFromYts(): void
+    private function downloadTorrentsFromYts(Quality $quality): void
     {
         if (! $this->option('force') && $this->confirm('Are you sure you would like to download them') === false) {
             return;
