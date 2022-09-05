@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use LaravelZero\Framework\Commands\Command;
 use Symfony\Component\Console\Output\OutputInterface;
+use function Termwind\render;
 
 class DownloadCommand extends Command
 {
@@ -56,9 +57,9 @@ class DownloadCommand extends Command
     {
         $this->traktList = $this->trakt->getList($username, $list);
 
-        $this->comment(
+        $this->components->info(
             "<options=bold>{$list}</> (<options=bold>{$username}</>): Retrieved successfully",
-            OutputInterface::VERBOSITY_VERY_VERBOSE
+            OutputInterface::VERBOSITY_VERBOSE
         );
 
         $this->line('');
@@ -85,7 +86,7 @@ class DownloadCommand extends Command
             if (! $ytsListing = $this->yts->getMovieByImdbId($movie->imdbId, $this->quality)) {
                 $this->components->warn(
                     "'{$movie->title} ({$movie->year})': Not found on YTS",
-                    OutputInterface::VERBOSITY_VERY_VERBOSE
+                    OutputInterface::VERBOSITY_VERBOSE
                 );
 
                 continue;
@@ -94,7 +95,7 @@ class DownloadCommand extends Command
             if ($ytsListing->torrents->isEmpty()) {
                 $this->components->warn(
                     "'{$movie->title} ({$movie->year})': No torrents available",
-                    OutputInterface::VERBOSITY_VERY_VERBOSE
+                    OutputInterface::VERBOSITY_VERBOSE
                 );
 
                 continue;
@@ -107,8 +108,8 @@ class DownloadCommand extends Command
 
             if (! $matchedTorrent) {
                 $this->components->warn(
-                    "'{$movie->title} ({$movie->year})': No torrent available in '{$this->quality->value}' quality",
-                    OutputInterface::VERBOSITY_VERY_VERBOSE
+                    "  ↳ '{$movie->title} ({$movie->year})': No torrent available in '{$this->quality->value}' quality",
+                    OutputInterface::VERBOSITY_VERBOSE
                 );
 
                 continue;
@@ -123,8 +124,7 @@ class DownloadCommand extends Command
                 "{$outputDirectory}/{$movie->title} ({$movie->year}) {$matchedTorrent->quality?->value}.torrent"
             )) {
                 $this->components->info(
-                    "'<options=bold>{$movie->title} ({$movie->year})</>': Successfully downloaded at '<options=bold>{$matchedTorrent->quality?->value}</>'",
-                    OutputInterface::VERBOSITY_VERBOSE
+                    "'{$movie->title} ({$movie->year})': Successfully downloaded at '<options=bold>{$matchedTorrent->quality?->value}</>'"
                 );
             }
         }

@@ -1,3 +1,3 @@
 <x-layouts.app>
-    <span class="text-red">{{ $notice }}</span>
+    <span class="text-yellow">{{ $message }}</span>
 </x-layouts.app>
