@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## Unreleased
 
+## [v2.0.1 - 2022-09-05](https://github.com/pxgamer/trakt-to-yts/compare/v2.0.0...v2.0.1)
+
+### Changed
+- Clean up command ([9327263](https://github.com/pxgamer/trakt-to-yts/commit/9327263322b4d169c5318f54c1f12a790e2cd363), [1c7f576](https://github.com/pxgamer/trakt-to-yts/commit/1c7f576493ea0780d0f5a25ce0e216771b3b9e8f))
+- Add fallbacks for missing inputs ([b57732d](https://github.com/pxgamer/trakt-to-yts/commit/b57732d6fb11b09450afefe979109ac47036c38d))
+
 ## [v2.0.0 - 2022-09-04](https://github.com/pxgamer/trakt-to-yts/compare/v1.0.0...v2.0.0)
 
 ### Changed
