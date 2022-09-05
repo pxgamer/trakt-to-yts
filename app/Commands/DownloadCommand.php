@@ -16,7 +16,7 @@ class DownloadCommand extends Command
 {
     /** {@inheritdoc} */
     protected $signature = 'download { trakt-user? : Trakt username for the list }
-                                     { list=watchlist : A custom list id or stub }
+                                     { list? : A custom list id or stub }
                                      { --o|output=./torrents : The directory to output data to }
                                      { --quality=1080p : The quality to download (720p, 1080p or 3D) }
                                      { --y|force : Do not prompt about downloading torrents }';
@@ -37,12 +37,17 @@ class DownloadCommand extends Command
         $this->yts = $ytsClient;
 
         $quality = Quality::tryFrom($this->option('quality')) ?? Quality::Q_1080P;
+        $username = $this->argument('trakt-user') ?? $this->ask('What is the Trakt username?');
+        $list = $this->argument('list') ?? $this->ask('What is the list slug or id?', 'watchlist');
+
+        if ($username === null) {
+            $this->components->warn('A Trakt user must be specified');
+
+            return;
+        }
 
         try {
-            $this->retrieveTraktList(
-                $this->argument('trakt-user') ?? $this->ask('What is the Trakt username'),
-                $this->argument('list') ?? $this->ask('What is the list slug or id'),
-            )->downloadTorrentsFromYts($quality);
+            $this->retrieveTraktList($username, $list)->downloadTorrentsFromYts($quality);
         } catch (\RuntimeException $exception) {
             $this->warn($exception->getMessage());
 
