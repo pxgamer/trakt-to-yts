@@ -11,13 +11,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use LaravelZero\Framework\Commands\Command;
 use Symfony\Component\Console\Output\OutputInterface;
-use function Termwind\render;
 
 class DownloadCommand extends Command
 {
     /** {@inheritdoc} */
     protected $signature = 'download { trakt-user? : Trakt username for the list }
-                                     { --l|list=watchlist : A custom list id or stub }
+                                     { list=watchlist : A custom list id or stub }
                                      { --o|output=./torrents : The directory to output data to }
                                      { --quality=1080p : The quality to download (720p, 1080p or 3D) }
                                      { --y|force : Do not prompt about downloading torrents }';
@@ -28,8 +27,6 @@ class DownloadCommand extends Command
     /** @var Collection<Movie> */
     private Collection $traktList;
 
-    private Quality $quality;
-
     private TraktClient $trakt;
 
     private YTSClient $yts;
@@ -39,13 +36,13 @@ class DownloadCommand extends Command
         $this->trakt = $traktClient;
         $this->yts = $ytsClient;
 
-        $this->quality = Quality::tryFrom($this->option('quality')) ?? Quality::Q_1080P;
+        $quality = Quality::tryFrom($this->option('quality')) ?? Quality::Q_1080P;
 
         try {
             $this->retrieveTraktList(
                 $this->argument('trakt-user') ?? $this->ask('What is the Trakt username'),
-                $this->option('list') ?? $this->ask('What is the list slug or id'),
-            )->downloadTorrentsFromYts();
+                $this->argument('list') ?? $this->ask('What is the list slug or id'),
+            )->downloadTorrentsFromYts($quality);
         } catch (\RuntimeException $exception) {
             $this->warn($exception->getMessage());
 
@@ -83,7 +80,7 @@ class DownloadCommand extends Command
                 continue;
             }
 
-            if (! $ytsListing = $this->yts->getMovieByImdbId($movie->imdbId, $this->quality)) {
+            if (! $ytsListing = $this->yts->getMovieByImdbId($movie->imdbId, $quality)) {
                 $this->components->warn(
                     "'{$movie->title} ({$movie->year})': Not found on YTS",
                     OutputInterface::VERBOSITY_VERBOSE
@@ -103,12 +100,12 @@ class DownloadCommand extends Command
 
             /** @var Torrent $matchedTorrent */
             $matchedTorrent = $ytsListing->torrents
-                ->filter(fn (Torrent $torrent) => $torrent->quality instanceof $this->quality)
+                ->filter(fn (Torrent $torrent) => $torrent->quality === $quality)
                 ->first();
 
             if (! $matchedTorrent) {
                 $this->components->warn(
-                    "  ↳ '{$movie->title} ({$movie->year})': No torrent available in '{$this->quality->value}' quality",
+                    "  ↳ '{$movie->title} ({$movie->year})': No torrent available in '{$quality->value}' quality",
                     OutputInterface::VERBOSITY_VERBOSE
                 );
 

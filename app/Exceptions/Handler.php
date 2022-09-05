@@ -19,7 +19,7 @@ class Handler extends ExceptionHandler
         }
 
         if ($e instanceof TraktToYTSException) {
-            render(view('error', ['message' =>  $e->getMessage()])->render());
+            render(view('error', ['message' => $e->getMessage()])->render());
 
             return;
         }
