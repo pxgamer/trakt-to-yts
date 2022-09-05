@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DownloadCommand extends Command
 {
     /** {@inheritdoc} */
-    protected $signature = 'download { trakt-user : Trakt username for the list }
+    protected $signature = 'download { trakt-user= : Trakt username for the list }
                                      { --l|list=watchlist : A custom list id or stub }
                                      { --o|output=./torrents : The directory to output data to }
                                      { --quality=1080p : The quality to download (720p, 1080p or 3D) }
@@ -27,7 +27,7 @@ class DownloadCommand extends Command
     /** @var Collection<Movie> */
     private Collection $traktList;
 
-    private Quality|null $quality;
+    private Quality $quality;
 
     private TraktClient $trakt;
 
@@ -38,10 +38,14 @@ class DownloadCommand extends Command
         $this->trakt = $traktClient;
         $this->yts = $ytsClient;
 
-        $this->quality = Quality::tryFrom($this->option('quality'));
+        $
+        $this->quality = Quality::tryFrom($this->option('quality')) ?? Quality::Q_1080P;
 
         try {
-            $this->retrieveTraktList()->downloadTorrentsFromYts();
+            $this->retrieveTraktList(
+                $this->argument('trakt-user') ?? $this->ask('What is the Trakt username'),
+                $this->option('list') ?? $this->ask('What is the list slug or id'),
+            )->downloadTorrentsFromYts();
         } catch (\RuntimeException $exception) {
             $this->warn($exception->getMessage());
 
@@ -49,12 +53,12 @@ class DownloadCommand extends Command
         }
     }
 
-    private function retrieveTraktList(): self
+    private function retrieveTraktList(string $username, string|null $list): self
     {
-        $this->traktList = $this->trakt->getList($this->argument('trakt-user'), $this->option('list'));
+        $this->traktList = $this->trakt->getList($username, $list);
 
         $this->comment(
-            "<options=bold>{$this->option('list')}</> (<options=bold>{$this->argument('trakt-user')}</>): Retrieved successfully",
+            "<options=bold>{$list}</> (<options=bold>{$username}</>): Retrieved successfully",
             OutputInterface::VERBOSITY_VERY_VERBOSE
         );
 
@@ -104,7 +108,7 @@ class DownloadCommand extends Command
 
             if (! $matchedTorrent) {
                 $this->components->warn(
-                    "'{$movie->title} ({$movie->year})': No torrent available in '{$this->quality?->value}' quality",
+                    "'{$movie->title} ({$movie->year})': No torrent available in '{$this->quality->value}' quality",
                     OutputInterface::VERBOSITY_VERY_VERBOSE
                 );
 
