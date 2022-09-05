@@ -29,15 +29,19 @@ class DownloadCommand extends Command
 
     private Quality|null $quality;
 
-    private string $apiToken;
+    private TraktClient $trakt;
 
-    public function handle(): void
+    private YTSClient $yts;
+
+    public function handle(TraktClient $traktClient): void
     {
+        $this->trakt = $traktClient;
+        $this->yts = $ytsClient;
+
         $this->quality = Quality::tryFrom($this->option('quality'));
 
         try {
-            $this->retrieveTraktList()
-                ->downloadTorrentsFromYts();
+            $this->retrieveTraktList()->downloadTorrentsFromYts();
         } catch (\RuntimeException $exception) {
             $this->warn($exception->getMessage());
 
@@ -47,10 +51,7 @@ class DownloadCommand extends Command
 
     private function retrieveTraktList(): self
     {
-        /** @var TraktClient $traktApi */
-        $traktApi = app(TraktClient::class);
-
-        $this->traktList = $traktApi->getList($this->argument('trakt-user'), $this->option('list'));
+        $this->traktList = $this->trakt->getList($this->argument('trakt-user'), $this->option('list'));
 
         $this->comment(
             "<options=bold>{$this->option('list')}</> (<options=bold>{$this->argument('trakt-user')}</>): Retrieved successfully",
@@ -70,9 +71,6 @@ class DownloadCommand extends Command
             return;
         }
 
-        /** @var YTSClient $ytsApi */
-        $ytsApi = app(YTSClient::class);
-
         $this->line('');
 
         /** @var Movie $movie */
@@ -81,7 +79,7 @@ class DownloadCommand extends Command
                 continue;
             }
 
-            if (! $ytsListing = $ytsApi->getMovieByImdbId($movie->imdbId, $this->quality)) {
+            if (! $ytsListing = $this->yts->getMovieByImdbId($movie->imdbId, $this->quality)) {
                 $this->components->warn(
                     "'{$movie->title} ({$movie->year})': Not found on YTS",
                     OutputInterface::VERBOSITY_VERY_VERBOSE
@@ -117,7 +115,7 @@ class DownloadCommand extends Command
 
             File::ensureDirectoryExists($outputDirectory);
 
-            if ($ytsApi->downloadTorrentTo(
+            if ($this->yts->downloadTorrentTo(
                 $matchedTorrent,
                 "{$outputDirectory}/{$movie->title} ({$movie->year}) {$matchedTorrent->quality?->value}.torrent"
             )) {
