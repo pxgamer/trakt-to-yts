@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DownloadCommand extends Command
 {
     /** {@inheritdoc} */
-    protected $signature = 'download { trakt-user= : Trakt username for the list }
+    protected $signature = 'download { trakt-user? : Trakt username for the list }
                                      { --l|list=watchlist : A custom list id or stub }
                                      { --o|output=./torrents : The directory to output data to }
                                      { --quality=1080p : The quality to download (720p, 1080p or 3D) }
@@ -33,12 +33,11 @@ class DownloadCommand extends Command
 
     private YTSClient $yts;
 
-    public function handle(TraktClient $traktClient): void
+    public function handle(TraktClient $traktClient, YTSClient $ytsClient): void
     {
         $this->trakt = $traktClient;
         $this->yts = $ytsClient;
 
-        $
         $this->quality = Quality::tryFrom($this->option('quality')) ?? Quality::Q_1080P;
 
         try {
