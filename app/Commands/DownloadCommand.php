@@ -18,7 +18,7 @@ class DownloadCommand extends Command
     protected $signature = 'download { trakt-user? : Trakt username for the list }
                                      { list? : A custom list id or stub }
                                      { --o|output=./torrents : The directory to output data to }
-                                     { --quality=1080p : The quality to download (720p, 1080p or 3D) }
+                                     { --quality=1080p : The quality to download (720p, 1080p, 2160p, or 3D) }
                                      { --y|force : Do not prompt about downloading torrents }';
 
     /** {@inheritdoc} */
