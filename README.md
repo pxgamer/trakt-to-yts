@@ -23,13 +23,23 @@ composer require pxgamer/trakt-to-yts
 - Set the `TRAKT_API_TOKEN` environment variable for your Terminal
 - Run `trakt-to-yts` to view available commands
 
+### Via Docker
+
+```shell
+# Build the Docker image
+docker build -t trakt-to-yts .
+
+# Execute a command
+docker run --rm -it trakt-to-yts
+```
+
 ## Change log
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
 ## Testing
 
-``` shell
+```shell
 composer test
 ```
 
