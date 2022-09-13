@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ## Unreleased
 
+## [v2.1.0 - 2022-09-13](https://github.com/pxgamer/trakt-to-yts/compare/v2.0.1...v2.1.0)
+
+### Added
+- Add Docker support ([665508c](https://github.com/pxgamer/trakt-to-yts/commit/665508c2053a91741ab580ce538a8004e072fd20))
+- Add support for 4K (2160p) downloads ([ad4f6bb](https://github.com/pxgamer/trakt-to-yts/commit/ad4f6bb8f6be3bbc5f435f8b92e7e71e1fa76103))
+
+### Changed
+- Move `--list` to be an argument ([06e5a85](https://github.com/pxgamer/trakt-to-yts/commit/06e5a85b2b57f15a4be5fb9bf53cd3816cfaa027))
+
+### Fixed
+- Ensure Trakt user is provided ([7b6a5ab](https://github.com/pxgamer/trakt-to-yts/commit/7b6a5ab8498049e7e76f790d82255489ee742a5c))
+
 ## [v2.0.1 - 2022-09-05](https://github.com/pxgamer/trakt-to-yts/compare/v2.0.0...v2.0.1)
 
 ### Changed
